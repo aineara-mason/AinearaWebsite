@@ -9,15 +9,22 @@ Marketing site for Aineara — the AI-native product studio.
 
 ## File Structure
 ```
-aineara/
-├── index.html          # Main page
-├── css/
-│   └── style.css       # All styles
-├── js/
-│   └── main.js         # Cursor, nav, reveal, form logic
-├── _redirects          # Cloudflare Pages redirect rules
+AinearaWebsite/
+├── public/             # The website — this is the only folder that gets published
+│   ├── index.html, sillage.html, ascend.html, privacy.html, terms.html
+│   ├── css/            # Styles
+│   ├── js/             # Cursor, nav, reveal, form logic
+│   ├── _redirects      # Cloudflare Pages redirect rules
+│   ├── robots.txt
+│   └── sitemap.xml
+├── functions/
+│   └── api/subscribe.js  # Pages Function: POST /api/subscribe (D1 + Resend)
+├── schema.sql          # D1 schema (run once in the D1 console)
 └── README.md
 ```
+
+Only `public/` is served. `functions/` stays at the repo root, where Pages looks
+for it, and is never published as a static file.
 
 ## Deploying to Cloudflare Pages
 
@@ -28,7 +35,7 @@ aineara/
 4. Build settings:
    - Framework preset: None
    - Build command: (leave blank)
-   - Build output directory: `/` (root)
+   - Build output directory: `public`
 5. Click Deploy
 6. Go to Custom Domains → add `aineara.com`
    Cloudflare will auto-configure DNS since the domain is already on Cloudflare
@@ -36,7 +43,7 @@ aineara/
 ### Option B — Direct upload (fastest)
 1. Go to Cloudflare Dashboard → Pages → Create a project
 2. Choose "Upload assets"
-3. Drag and drop the entire `aineara/` folder
+3. Drag and drop the `public/` folder
 4. Add custom domain after deploy
 
 ## Connecting Your Domain
@@ -60,7 +67,7 @@ When ready, we'll add a Cloudflare Worker at `/api/subscribe` that:
 3. Returns a success/error response
 
 ## Local Development
-No build step — just open `index.html` in a browser, or run:
+No build step — just open `public/index.html` in a browser, or run:
 ```bash
-npx serve .
+npx serve public
 ```
