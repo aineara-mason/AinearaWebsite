@@ -150,7 +150,7 @@ export async function onRequestPost({ request, env }) {
 
     // If no rows were changed, email already existed — still return success
     // but skip sending the confirmation email again.
-    if (result.changes === 0) {
+    if (result.meta.changes === 0) {
       return json({ success: true, already_subscribed: true }, 200, origin);
     }
   } catch (err) {
