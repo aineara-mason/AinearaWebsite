@@ -5,7 +5,7 @@ Marketing site for Aineara — the AI-native product studio.
 ## Stack
 - Pure HTML / CSS / JS — no build step required
 - Hosted on Cloudflare Pages
-- Email capture via Resend (to be wired in next session)
+- Waitlist signups stored in Cloudflare D1, confirmation emails sent via Resend
 
 ## File Structure
 ```
@@ -53,21 +53,56 @@ Since your domain is already on Cloudflare:
 3. Cloudflare will auto-add the required DNS records
 4. HTTPS is automatic — no extra config needed
 
-## Wiring Up Resend (next session)
-The email form in `js/main.js` has a clearly marked placeholder comment:
+## Waitlist Signup (`/api/subscribe`)
+The signup forms on the Sillage and Ascend pages (wired up in `public/js/main.js`)
+POST `{ email, source }` to `/api/subscribe`, a Cloudflare Pages Function in
+`functions/api/subscribe.js`. `source` records which form was used
+(`sillage-landing`, `ascend-homepage` or `ascend-landing`).
 
-```js
-// ─── Resend integration goes here ───
-// Replace the simulateDelay() call with your fetch() to /api/subscribe
+What the function does:
+1. Validates the email and normalizes it (lowercase, trimmed).
+2. Stores it in D1 with `INSERT OR IGNORE`. The `email` column is unique, so
+   repeat signups are ignored, return success with `already_subscribed: true`,
+   and do **not** trigger a second confirmation email.
+3. Sends a confirmation email through Resend from `hello@aineara.com`.
+   If Resend fails, the error is logged and the visitor still sees success,
+   since their signup is already saved.
+
+CORS headers only grant browser access to `aineara.com` and `www.aineara.com`.
+(This limits other websites' scripts, not direct API calls.)
+
+### Setup checklist
+These live in Cloudflare and Resend, not in this repo, so a new project or
+account needs them redone:
+
+- **D1 database** named `aineara-waitlist`, with the table created from
+  `schema.sql`. Paste only the SQL statements into the D1 console (the leading
+  comment lines make it reject the query as empty).
+- **D1 binding** on the Pages project (Settings → Bindings): variable name
+  `DB` → `aineara-waitlist`.
+- **Secret** on the Pages project (Settings → Variables and Secrets):
+  `RESEND_API_KEY`, with Sending access.
+- **Resend domain**: `aineara.com` verified in Resend. The DNS records go on
+  the `send` and `resend._domainkey` names, and Resend flags any conflicting
+  record at those names.
+- **Redeploy** after changing bindings or secrets. Pages only applies them to
+  new deployments.
+
+If the function can't see the binding or the secret it returns
+`500 Service misconfigured`. That is the first thing to check after an account
+or project move.
+
+### Reading signups
+Use the D1 console (D1 → `aineara-waitlist` → Console):
+```sql
+SELECT email, source, created_at FROM subscribers ORDER BY created_at DESC;
 ```
 
-When ready, we'll add a Cloudflare Worker at `/api/subscribe` that:
-1. Receives the POST with `{ email }`
-2. Calls the Resend API to add the contact
-3. Returns a success/error response
-
 ## Local Development
-No build step — just open `public/index.html` in a browser, or run:
+The static pages need no build step — open `public/index.html` in a browser, or run:
 ```bash
 npx serve public
 ```
+That serves the pages only. `/api/subscribe` is a Pages Function and doesn't
+exist under `serve`. To run it locally, use `npx wrangler pages dev public`,
+with the secret in a `.dev.vars` file (already git-ignored).
