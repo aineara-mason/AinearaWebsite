@@ -1,0 +1,32 @@
+/* ─────────────────────────────────────────
+   Ascend — ascend.css
+   Extends style.css. Never overrides base tokens.
+   ───────────────────────────────────────── */
+
+/* ─── Hero variant ─── */
+.ascend-hero .hero-bg::before {
+  background: radial-gradient(ellipse 65% 50% at 50% 55%, rgba(201,145,90,0.08) 0%, transparent 68%);
+}
+[data-theme="light"] .ascend-hero .hero-bg::before {
+  background: radial-gradient(ellipse 65% 50% at 50% 55%, rgba(176,120,64,0.06) 0%, transparent 68%);
+}
+
+/* ─── Badge (reuse sillage-badge) ─── */
+.ascend-badge {
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.6s var(--spring) 0.1s forwards;
+}
+
+/* ─── Features Grid: 2×2 ─── */
+#ascend-features-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (max-width: 768px) {
+  #ascend-features-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Readiness chips ─── */
+.ascend-chips {
+  align-content: flex-start;
+}

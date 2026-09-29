@@ -1,0 +1,10 @@
+# Aineara — Cloudflare Pages Config
+# No build step needed for static HTML/CSS/JS
+
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301

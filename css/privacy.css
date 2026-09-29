@@ -1,0 +1,165 @@
+/* ─────────────────────────────────────────
+   Privacy Policy — privacy.css
+   Extends style.css — no base token overrides.
+   ───────────────────────────────────────── */
+
+/* ─── Hero ─── */
+.privacy-hero {
+  padding: 180px 56px 100px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.privacy-hero .section-label {
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.1s forwards;
+}
+
+.privacy-title {
+  font-family: var(--serif);
+  font-size: clamp(52px, 7vw, 96px);
+  font-weight: 300;
+  line-height: 1.0;
+  color: var(--text-primary);
+  margin: 16px 0 36px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.2s forwards;
+}
+
+.privacy-title em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.privacy-subtitle {
+  max-width: 580px;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.95;
+  margin-bottom: 20px;
+}
+
+.privacy-date {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── Policy Body ─── */
+.privacy-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 56px 160px;
+  border-top: 1px solid var(--border);
+}
+
+/* ─── Individual Sections ─── */
+.privacy-section {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.privacy-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 2px;
+  background: var(--amber);
+  transition: width 0.45s ease;
+}
+
+.privacy-section:hover::before { width: 100%; }
+
+.privacy-section-title {
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.privacy-section p {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.95;
+  margin-bottom: 16px;
+}
+
+.privacy-section p:last-child { margin-bottom: 0; }
+
+.privacy-section a {
+  color: var(--amber);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-warm);
+  padding-bottom: 1px;
+  transition: color var(--ease), border-color var(--ease);
+}
+
+.privacy-section a:hover {
+  color: var(--amber-light);
+  border-color: var(--amber-dim);
+}
+
+.privacy-section strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ─── List ─── */
+.privacy-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.privacy-list li {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.95;
+  padding: 10px 0 10px 20px;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+.privacy-list li:last-child {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.privacy-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22px;
+  width: 4px;
+  height: 1px;
+  background: var(--amber-dim);
+}
+
+/* ─── Address block ─── */
+.privacy-address {
+  color: var(--text-muted) !important;
+  font-size: 12px !important;
+  line-height: 2 !important;
+  letter-spacing: 0.04em;
+  margin-top: 8px !important;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .privacy-hero  { padding: 160px 32px 80px; }
+  .privacy-body  { padding: 0 32px 120px; }
+}
+
+@media (max-width: 768px) {
+  .privacy-hero  { padding: 120px 24px 64px; }
+  .privacy-body  { padding: 0 24px 100px; }
+  .privacy-section { padding: 40px 0; }
+  .privacy-section-title { font-size: 22px; }
+}

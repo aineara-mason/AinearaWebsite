@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sillage — a fragrance collection and review app for true enthusiasts. Log every bottle, capture every wear, and discover what to reach for next." />
+  <meta name="theme-color" content="#000000" />
+
+  <link rel="canonical" href="https://aineara.com/sillage" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Sillage — Your collection, beautifully kept." />
+  <meta property="og:description" content="A fragrance app for people who care deeply about what they wear. Log, review, discover." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://aineara.com/sillage" />
+  <meta property="og:image" content="https://aineara.com/og-sillage.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Aineara" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@aineara" />
+  <meta name="twitter:title" content="Sillage — Your collection, beautifully kept." />
+  <meta name="twitter:description" content="A fragrance app for people who care deeply about what they wear. Log, review, discover." />
+  <meta name="twitter:image" content="https://aineara.com/og-sillage.png" />
+
+  <title>Sillage — Your collection, beautifully kept.</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400&family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/sillage.css" />
+
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "411851aee5a1405bae51700fa7d882e6"}'></script><!-- End Cloudflare Web Analytics -->
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Sillage",
+    "operatingSystem": "iOS",
+    "applicationCategory": "LifestyleApplication",
+    "description": "A fragrance collection and review app for true enthusiasts. Log every bottle, capture every wear, and discover what to reach for next.",
+    "url": "https://aineara.com/sillage",
+    "author": {
+      "@type": "Organization",
+      "name": "Aineara",
+      "url": "https://aineara.com"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <!-- ─── Navigation ─── -->
+  <nav id="nav" role="navigation" aria-label="Main navigation">
+    <a href="/" class="nav-logo" aria-label="Aineara home">Aineara</a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/">Home</a></li>
+      <li><a href="#waitlist">Waitlist</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+        <span class="icon-moon">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+        <span class="icon-sun">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </span>
+      </button>
+      <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ─── Hero ─── -->
+    <section class="hero sillage-hero" aria-label="Sillage hero">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+
+      <div class="sillage-badge" aria-label="App status">
+        <span class="sillage-badge-dot" aria-hidden="true"></span>
+        An Aineara App — iOS — Coming Soon
+      </div>
+
+      <h1 class="hero-title">
+        Your collection,<br><span class="italic-accent">beautifully kept.</span>
+      </h1>
+
+      <p class="hero-tagline">
+        The fragrance app for true enthusiasts. Log every bottle. Capture every wear. Discover what to reach for next.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#waitlist" class="btn-primary">Request Early Access <span class="btn-primary-arrow">→</span></a>
+        <a href="#features" class="btn-ghost">See What's Inside</a>
+      </div>
+
+      <div class="hero-scroll" aria-hidden="true">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ─── Intro Statement ─── -->
+    <section class="manifesto" aria-label="Sillage statement">
+      <div class="manifesto-inner">
+        <p class="section-label reveal">The Idea</p>
+        <p class="manifesto-text reveal">
+          Fragrance is personal.
+          <span style="color:var(--muted);font-weight:300;">The tools to collect it</span>
+          <span class="italic-accent">should be too.</span>
+        </p>
+        <p class="manifesto-sub reveal reveal-delay-1">
+          Sillage is built for the collector who tracks their bottles by house, by note, by season — and wants a place worthy of the obsession. Not a database. Not a social feed. Something that feels like the fragrances it holds.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── Features ─── -->
+    <section class="pillars bg-surface" id="features" aria-label="Features">
+      <div class="pillars-header">
+        <div>
+          <p class="section-label reveal">What Sillage Does</p>
+        </div>
+        <span class="pillars-subtitle reveal">Four things, done precisely right.</span>
+      </div>
+      <div class="pillars-grid reveal" id="sillage-features-grid">
+        <article class="pillar">
+          <span class="pillar-num" aria-hidden="true">01</span>
+          <h3 class="pillar-title">Collection, curated</h3>
+          <p class="pillar-body">Every bottle you own or have tried, beautifully organized. Tag by house, note pyramid, season, occasion — and finally have the overview your collection deserves.</p>
+        </article>
+        <article class="pillar">
+          <span class="pillar-num" aria-hidden="true">02</span>
+          <h3 class="pillar-title">Wear logs &amp; reviews</h3>
+          <p class="pillar-body">Log each wear with notes on sillage, longevity, and mood. Build a personal fragrance diary that sharpens your nose and makes every future purchase more intentional.</p>
+        </article>
+        <article class="pillar">
+          <span class="pillar-num" aria-hidden="true">03</span>
+          <h3 class="pillar-title">AI scent matching</h3>
+          <p class="pillar-body">Tell Sillage the occasion, the weather, the feeling — and it surfaces exactly what to reach for from your collection. Like a knowledgeable friend who knows every bottle you own.</p>
+        </article>
+        <article class="pillar">
+          <span class="pillar-num" aria-hidden="true">04</span>
+          <h3 class="pillar-title">A community of noses</h3>
+          <p class="pillar-body">Follow reviewers whose taste you trust. Share your own takes publicly. Discover bottles you'd never have found through search — only through someone's honest, considered opinion.</p>
+        </article>
+      </div>
+    </section>
+
+    <hr class="hr-gold" aria-hidden="true" />
+
+    <!-- ─── Community Preview ─── -->
+    <section class="approach" id="community" aria-label="Community">
+      <div class="approach-inner">
+        <div class="approach-left">
+          <p class="section-label reveal">The Community</p>
+          <h2 class="approach-title reveal">Reviews worth<br>reading.</h2>
+          <p class="approach-body reveal">
+            Sillage isn't built for star ratings and mass opinion. It's built for considered ones — from people who take fragrance seriously enough to write more than three words about it.
+          </p>
+          <p class="approach-body reveal">
+            Follow the reviewers who have earned your trust. Discover through their noses.
+          </p>
+        </div>
+
+        <div class="sillage-reviews-col reveal">
+          <div class="sillage-review">
+            <div class="sillage-review-header">
+              <div class="sillage-avatar">E</div>
+              <div>
+                <p class="sillage-reviewer-name">Elise Moreau</p>
+                <p class="sillage-reviewer-meta">@elise.olfactory &middot; 142 followers</p>
+              </div>
+            </div>
+            <p class="sillage-fragrance-label">Fragrance</p>
+            <p class="sillage-fragrance-name">Baccarat Rouge 540 — MFK</p>
+            <p class="sillage-review-text">Impossibly smooth. The amber-cedar drydown is where it earns its price — divisive for a reason, but worn on the right skin it becomes something else entirely.</p>
+            <div class="sillage-notes">
+              <span class="sillage-note">Ambergris</span>
+              <span class="sillage-note">Cedarwood</span>
+              <span class="sillage-note">Jasmine</span>
+            </div>
+          </div>
+
+          <div class="sillage-review">
+            <div class="sillage-review-header">
+              <div class="sillage-avatar sillage-avatar--alt">T</div>
+              <div>
+                <p class="sillage-reviewer-name">Thomas Park</p>
+                <p class="sillage-reviewer-meta">@thomas.scent &middot; 89 followers</p>
+              </div>
+            </div>
+            <p class="sillage-fragrance-label">Fragrance</p>
+            <p class="sillage-fragrance-name">Oud Wood — Tom Ford</p>
+            <p class="sillage-review-text">The definition of effortless sophistication. Projection is modest — this is a close-skin experience. Nothing competes with it in a room.</p>
+            <div class="sillage-notes">
+              <span class="sillage-note">Oud</span>
+              <span class="sillage-note">Sandalwood</span>
+              <span class="sillage-note">Amber</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── AI Chip Section ─── -->
+    <section class="pillars bg-surface" aria-label="AI suggestion feature">
+      <div class="approach-inner">
+        <div>
+          <p class="section-label reveal">Intelligent Suggestions</p>
+          <h2 class="approach-title reveal">What should I<br>wear tonight?</h2>
+          <p class="approach-body reveal">
+            Sillage knows your collection and knows fragrance. Tell it the occasion — it does the rest. Not a generic recommendation engine. A system that's learned your taste.
+          </p>
+        </div>
+
+        <div class="sillage-chips reveal" id="sillageChips" aria-label="Example prompts">
+          <button class="sillage-chip sillage-chip--active">A rainy Tuesday at the office</button>
+          <button class="sillage-chip">First date, rooftop bar</button>
+          <button class="sillage-chip">Sunday morning, slow walk</button>
+          <button class="sillage-chip">Black tie dinner</button>
+          <button class="sillage-chip">Beach in August</button>
+          <button class="sillage-chip">Long-haul flight</button>
+          <button class="sillage-chip">Cozy evening at home</button>
+          <button class="sillage-chip">Job interview</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Waitlist + Studio ─── -->
+    <section class="coming-soon" id="waitlist" aria-label="Join the waitlist">
+      <div class="coming-soon-inner">
+
+        <!-- Waitlist form -->
+        <div class="coming-soon-col">
+          <p class="section-label reveal">Coming to iOS</p>
+          <h2 class="reveal">Be first to wear it.</h2>
+          <p class="reveal">Sillage is in development. Join the waitlist and get early access the moment it launches — we'll only reach out when it matters.</p>
+
+          <form class="email-form reveal" id="heroForm" novalidate aria-label="Waitlist signup">
+            <label for="heroEmail" class="sr-only">Email address</label>
+            <input
+              type="email"
+              id="heroEmail"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="none"
+              spellcheck="false"
+              required
+              aria-required="true"
+            />
+            <button type="submit">Request Access</button>
+          </form>
+          <p class="form-note reveal" id="heroNote" aria-live="polite">No noise. Just a note when Sillage is ready.</p>
+        </div>
+
+        <!-- Studio info -->
+        <div class="coming-soon-col">
+          <p class="section-label reveal">The Studio</p>
+          <h2 class="reveal">Made by Aineara</h2>
+          <p class="reveal">Sillage is the first app from Aineara — an independent product studio building AI-native software for life's most meaningful moments. We build for enthusiasts who care deeply, and feel it when something is made with equal care.</p>
+          <div class="about-divider reveal"></div>
+          <p class="about-contact-label reveal">Questions, press, or just want to talk fragrance:</p>
+          <a href="mailto:hello@aineara.com" class="about-contact-link reveal">hello@aineara.com</a>
+          <div style="margin-top: 24px;">
+            <a href="/" class="reveal" style="font-size: 12px; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--border); transition: color 0.2s ease;">← Back to Aineara</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ─── -->
+  <footer role="contentinfo">
+    <div class="footer-logo" aria-label="Sillage by Aineara">
+      Sillage <span style="font-weight: 300; color: var(--muted-dim); font-size: 11px; letter-spacing: 0.08em; text-transform: none;">by Aineara</span>
+    </div>
+    <p class="footer-copy">© <span id="copyright-year">2026</span> Aineara. All rights reserved.</p>
+    <div class="footer-links" aria-label="Footer navigation">
+      <a href="/">Home</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+  <script src="js/sillage.js" defer></script>
+</body>
+</html>
