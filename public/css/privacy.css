@@ -142,6 +142,45 @@
   background: var(--amber-dim);
 }
 
+/* ─── Tables (scroll sideways on narrow screens instead of squashing) ─── */
+.privacy-table-wrap {
+  overflow-x: auto;
+  margin: 12px 0 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.privacy-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.privacy-table th,
+.privacy-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 14px 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.privacy-table tr:last-child td { border-bottom: 1px solid var(--border); }
+
+.privacy-table th {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.privacy-section h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 28px 0 10px;
+}
+
 /* ─── Address block ─── */
 .privacy-address {
   color: var(--text-muted) !important;
