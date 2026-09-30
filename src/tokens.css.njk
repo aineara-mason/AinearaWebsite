@@ -1,0 +1,62 @@
+---
+permalink: /assets/css/tokens.css
+eleventyExcludeFromCollections: true
+---
+{%- macro kebab(key) -%}
+{{ key | replace(r/([a-z0-9])([A-Z])/g, "$1-$2") | lower }}
+{%- endmacro -%}
+
+{%- macro declarations(prefix, values) -%}
+{%- for key, value in values %}
+  {{ prefix }}{{ kebab(key) }}: {{ value | safe }};
+{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro lightTheme() %}
+  color-scheme: light;
+{{- declarations("--color-", tokens.studio.light) }}
+{{- declarations("--sillage-", tokens.sillage.light) }}
+  --ascend-accent-text: var(--ascend-accent-on-light);
+{%- endmacro -%}
+/* Generated from src/_data/tokens.js by src/tokens.css.njk. Edit the data file, not this output. */
+:root {
+  color-scheme: dark;
+{{- declarations("--color-", tokens.studio.dark) }}
+{{- declarations("--ascend-", tokens.ascend) }}
+{{- declarations("--sillage-", tokens.sillage.dark) }}
+  --ascend-surface: linear-gradient(180deg, var(--ascend-surface-top), var(--ascend-surface-bottom));
+  --ascend-accent-text: var(--ascend-accent);
+{{- declarations("--font-", tokens.font) }}
+{{- declarations("--text-", tokens.text) }}
+{{- declarations("--weight-", tokens.weight) }}
+{{- declarations("--tracking-", tokens.tracking) }}
+{{- declarations("--leading-", tokens.leading) }}
+{{- declarations("--radius-", tokens.radius) }}
+{%- for value in tokens.space %}
+  --space-{{ loop.index }}: {{ value | safe }};
+{%- endfor %}
+  --gutter: {{ tokens.gutter.phone | safe }};
+{{- declarations("--container-", tokens.container) }}
+{{- declarations("--shadow-", tokens.shadow) }}
+{{- declarations("--", tokens.motion) }}
+{{- declarations("--focus-", tokens.focus) }}
+}
+
+:root[data-theme="light"] {
+{{- lightTheme() }}
+}
+
+/* No JavaScript means no data-theme, so follow the device setting. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+{{- lightTheme() | indent(2) }}
+  }
+}
+
+@media (min-width: {{ tokens.breakpoint.tablet | safe }}) {
+  :root { --gutter: {{ tokens.gutter.tablet | safe }}; }
+}
+
+@media (min-width: {{ tokens.breakpoint.desktop | safe }}) {
+  :root { --gutter: {{ tokens.gutter.desktop | safe }}; }
+}
