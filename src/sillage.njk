@@ -1,0 +1,23 @@
+---
+layout: layouts/base.njk
+permalink: sillage.html
+titleId: title.sillage
+descriptionId: meta.sillage.description
+og: sillage
+pageStyles: ["/assets/css/sillage.css"]
+---
+<main id="main" class="sillage-page scope-sillage">
+  <div class="container">
+    <p class="label">{{ copy["sillage.label"] }}</p>
+    <h1 class="sillage-name">{{ copy["sillage.name"] }}</h1>
+    <div class="sillage-lines">
+      <p>{{ copy["sillage.line.1"] }}</p>
+      <p>{{ copy["sillage.line.2"] }}</p>
+    </div>
+    <section id="waitlist">
+      {% set signup = { id: "sillage", app: "sillage", source: "sillage-landing" } %}
+      {% include "partials/signup.njk" %}
+    </section>
+    <a class="sillage-back" href="/">{% icon "arrow-left" %}{{ copy["sillage.back"] }}</a>
+  </div>
+</main>

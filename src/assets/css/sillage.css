@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Sillage page (/sillage), loaded only there through pageStyles.
+   Every --sillage-* token has a dark and a light value in tokens.css
+   (:root, :root[data-theme="light"] and the no-JS media block), so these
+   rules give the dark scope and the cream light scope without their own
+   theme selectors.
+   ========================================================================== */
+
+/* One screen: the body stacks header, main and footer, and main takes
+   the height left between the nav and the footer. */
+body:has(.sillage-page) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.sillage-page {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  padding-block: var(--space-8);
+  border-block: 1px solid var(--sillage-hairline);
+  background: var(--sillage-page);
+  color: var(--sillage-text);
+}
+
+.sillage-page > .container {
+  width: 100%;
+}
+
+/* Gold label: 6.91:1 or better in dark, 5.08:1 in light (spec §4.1). */
+.sillage-page .label {
+  margin: 0 0 var(--space-4);
+  color: var(--sillage-gold);
+}
+
+.sillage-name {
+  margin: 0;
+  color: var(--sillage-text);
+  font-family: var(--font-sillage-display);
+  font-size: var(--text-display);
+  font-weight: var(--weight-sillage-display);
+  letter-spacing: normal;
+  line-height: var(--leading-display);
+}
+
+.sillage-lines {
+  max-width: var(--container-reading);
+  margin-top: var(--space-5);
+}
+
+.sillage-lines p {
+  margin: 0;
+  color: var(--sillage-text);
+  font-size: var(--text-card-title);
+  line-height: 1.4;
+}
+
+.sillage-lines p + p {
+  margin-top: var(--space-2);
+  color: var(--sillage-text-secondary);
+}
+
+/* The waitlist sits under a gold hairline. */
+.sillage-page #waitlist {
+  max-width: 34rem;
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--sillage-hairline);
+}
+
+/* Gold button with dark text: 7.33:1 dark, 5.35:1 light (spec §4.1). */
+.sillage-page .button--primary {
+  background: var(--sillage-button-bg);
+  color: var(--sillage-button-text);
+}
+
+.sillage-page .signup-note {
+  color: var(--sillage-text-secondary);
+}
+
+.sillage-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-7);
+  color: var(--sillage-text);
+  font-size: var(--text-small);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.sillage-back:hover {
+  color: var(--sillage-gold);
+}

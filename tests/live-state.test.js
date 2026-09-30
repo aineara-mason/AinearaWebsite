@@ -95,3 +95,15 @@ describe("index.html with Ascend live", () => {
     );
   });
 });
+
+describe("sillage.html with Ascend live", () => {
+  const root = readHtml("sillage.html", LIVE_DIR);
+
+  test("keeps the Sillage signup form", () => {
+    const forms = root.querySelectorAll("form.signup-form");
+    assert.equal(forms.length, 1, "one signup form on /sillage");
+    assert.equal(forms[0].getAttribute("data-source"), "sillage-landing");
+    assert.equal(forms[0].getAttribute("data-app"), "sillage");
+    assert.equal(root.querySelectorAll(".app-store-badge").length, 0, "no App Store badge on /sillage");
+  });
+});
