@@ -30,3 +30,6 @@ npm-debug.log*
 
 # Build output
 _site/
+
+# Local tool config
+.claude/launch.json
