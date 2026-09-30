@@ -1,0 +1,69 @@
+---
+layout: layouts/base.njk
+permalink: index.html
+titleId: title.home
+descriptionId: meta.home.description
+descriptionLiveId: meta.home.description.live
+og: home
+---
+<main id="main">
+  <section class="hero">
+    <div class="container">
+      <p class="label">{{ copy["home.hero.label"] }}</p>
+      <h1 class="display">{{ copy["home.hero.heading"] }}</h1>
+      <p>{{ copy["home.hero.line.live"] if site.apps.ascend.live else copy["home.hero.line"] }}</p>
+      <div class="hero-actions">
+        <a class="button button--primary" href="/ascend">{{ copy["home.hero.button"] }}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal" id="apps">
+    <div class="container">
+      <h2 class="label">{{ copy["home.apps.label"] }}</h2>
+      {% include "partials/app-card-ascend.njk" %}
+      {% include "partials/app-card-sillage.njk" %}
+    </div>
+  </section>
+
+  <section class="section section--alt reveal" id="principles">
+    <div class="container">
+      <h2 class="label">{{ copy["home.principles.label"] }}</h2>
+      <div class="principles">
+        <div class="principle">
+          <h3 class="principle-title">{{ copy["home.principles.1.title"] }}</h3>
+          <p class="principle-body">{{ copy["home.principles.1.body"] }}</p>
+        </div>
+        <div class="principle">
+          <h3 class="principle-title">{{ copy["home.principles.2.title"] }}</h3>
+          <p class="principle-body">{{ copy["home.principles.2.body"] }}</p>
+        </div>
+        <div class="principle">
+          <h3 class="principle-title">{{ copy["home.principles.3.title"] }}</h3>
+          <p class="principle-body">{{ copy["home.principles.3.body"] }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section about reveal" id="about">
+    <div class="container">
+      <p class="label">{{ copy["home.about.label"] }}</p>
+      <h2 class="heading">{{ copy["home.about.heading"] }}</h2>
+      <p>{{ copy["home.about"] }}</p>
+    </div>
+  </section>
+
+  <section class="section section--alt waitlist-strip reveal" id="waitlist">
+    <div class="container">
+      {% if site.apps.ascend.live %}
+        <h2 class="heading">{{ copy["home.waitlist.live.heading"] }}</h2>
+        {% include "partials/app-store-badge.njk" %}
+      {% else %}
+        <h2 class="heading">{{ copy["home.waitlist.heading"] }}</h2>
+        {% set signup = { id: "home", app: "ascend", source: "aineara-homepage" } %}
+        {% include "partials/signup.njk" %}
+      {% endif %}
+    </div>
+  </section>
+</main>

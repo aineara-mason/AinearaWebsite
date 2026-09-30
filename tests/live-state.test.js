@@ -1,62 +1,97 @@
-import { test, before } from "node:test";
+// Builds the site a second time with Ascend marked live, through the
+// test-only override in src/_data/site.js, and checks the pages that change.
+import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import copy from "../src/_data/copy.js";
+import path from "node:path";
 import { ROOT, readHtml, isTemplated, norm, pageStrings } from "./helpers/site.js";
 import { buildSite } from "./helpers/build.js";
+import copy from "../src/_data/copy.js";
 
 const TEST_APP_STORE_URL = "https://apps.apple.com/app/id0000000000";
-const LIVE_OUT = "_site-live";
-const LIVE_DIR = join(ROOT, LIVE_OUT);
+const LIVE_DIR = path.join(ROOT, "_site-live");
 
-before(() => {
-  buildSite({ outDir: LIVE_OUT, env: { AINEARA_TEST_ASCEND_LIVE_URL: TEST_APP_STORE_URL } });
-  assert.ok(existsSync(join(LIVE_DIR, "ascend.html")), "the live build did not write _site-live/ascend.html");
-});
+// The build finishes before any describe() below reads a page.
+await buildSite({ outDir: LIVE_DIR, env: { AINEARA_TEST_ASCEND_LIVE_URL: TEST_APP_STORE_URL } });
 
-function livePage(rel) {
-  const root = readHtml(rel, LIVE_DIR);
-  assert.ok(isTemplated(root), `_site-live/${rel} is still the legacy page`);
-  return root;
+const text = (el) => norm(el.text);
+
+function one(scope, selector) {
+  const el = scope.querySelector(selector);
+  assert.ok(el, `missing ${selector}`);
+  return el;
 }
-const joinStrings = (value) => (typeof value === "string" ? value : Array.from(value).join("\n"));
 
-test("ascend (live): no Ascend form and exactly one App Store badge, in the hero (D7)", () => {
-  const root = livePage("ascend.html");
-  assert.equal(root.querySelectorAll('form[data-app="ascend"]').length, 0);
-  const badges = root.querySelectorAll(".app-store-badge");
-  assert.equal(badges.length, 1, "Apple asks for one badge per layout");
-  assert.ok(root.querySelector("section.ascend-hero .app-store-badge"), "the badge belongs in the hero");
-  const [badge] = badges;
-  assert.equal(badge.getAttribute("href"), TEST_APP_STORE_URL);
-  const img = badge.querySelector("img");
-  assert.equal(img.getAttribute("alt"), "Download on the App Store");
-  assert.ok(Number(img.getAttribute("height")) >= 40, "Apple's minimum badge height is 40px");
+describe("ascend.html with Ascend live", () => {
+  const root = readHtml("ascend.html", LIVE_DIR);
+
+  test("has no Ascend signup form", () => {
+    assert.ok(isTemplated(root), "_site-live/ascend.html is still the legacy page");
+    assert.equal(root.querySelectorAll('form[data-app="ascend"]').length, 0);
+    assert.ok(!pageStrings(root).includes(copy["signup.note.ascend"]), "signup.note.ascend still shows after launch");
+  });
+
+  test("shows exactly one App Store badge, in the hero", () => {
+    const badges = root.querySelectorAll(".app-store-badge");
+    assert.equal(badges.length, 1, "exactly one badge on the page");
+    one(root, "section.ascend-hero .app-store-badge");
+    assert.equal(badges[0].getAttribute("href"), TEST_APP_STORE_URL);
+    const img = one(badges[0], "img");
+    assert.equal(img.getAttribute("alt"), copy["ascend.alt.badge"]);
+    assert.ok(Number(img.getAttribute("height")) >= 40, "the badge is at least 40px tall");
+  });
+
+  test("turns the #get-ascend heading into the App Store link", () => {
+    const link = one(root, `#get-ascend h2 a[href="${TEST_APP_STORE_URL}"]`);
+    assert.equal(text(link), copy["ascend.cta.heading.live"]);
+    one(root, "#get-ascend p.disclaimer");
+    assert.ok(
+      !pageStrings(root).includes(copy["ascend.cta.heading.waitlist"]),
+      "ascend.cta.heading.waitlist still shows after launch",
+    );
+  });
+
+  test("shows the live pricing line", () => {
+    const pricing = text(one(root, "#pricing"));
+    assert.ok(pricing.includes(copy["ascend.pricing"]), "ascend.pricing");
+    assert.ok(!pricing.includes(copy["ascend.pricing.waitlist"]), "ascend.pricing.waitlist still shows after launch");
+  });
+
+  test("uses the live meta description", () => {
+    assert.equal(
+      one(root, 'meta[name="description"]').getAttribute("content"),
+      copy["meta.ascend.description.live"],
+    );
+  });
 });
 
-test("ascend (live): the final heading links to the App Store instead of a second badge", () => {
-  const root = livePage("ascend.html");
-  const link = root.querySelector(`#get-ascend h2 a[href="${TEST_APP_STORE_URL}"]`);
-  assert.ok(link, "no App Store link in the #get-ascend h2");
-  assert.equal(norm(link.text), "Get Ascend on the App Store.");
-  assert.ok(root.querySelector("#get-ascend p.disclaimer"));
-});
+describe("index.html with Ascend live", () => {
+  const root = readHtml("index.html", LIVE_DIR);
 
-test("ascend (live): live pricing line and live meta description", () => {
-  const root = livePage("ascend.html");
-  const pricing = norm(root.querySelector("#pricing").text);
-  assert.ok(pricing.includes(copy["ascend.pricing"]));
-  assert.ok(!pricing.includes(copy["ascend.pricing.waitlist"]));
-  assert.equal(root.querySelector('meta[name="description"]').getAttribute("content"), copy["meta.ascend.description.live"]);
-});
+  test("swaps the waitlist form for one App Store badge under the live heading", () => {
+    assert.equal(root.querySelectorAll('form[data-app="ascend"]').length, 0, "no Ascend form");
+    assert.equal(root.querySelectorAll(".app-store-badge").length, 1, "exactly one badge on the page");
+    const strip = one(root, "section#waitlist");
+    assert.equal(text(one(strip, "h2")), copy["home.waitlist.live.heading"]);
+    const badge = one(strip, "a.app-store-badge");
+    assert.equal(badge.getAttribute("href"), TEST_APP_STORE_URL);
+    assert.equal(one(badge, "img").getAttribute("alt"), copy["ascend.alt.badge"]);
+    const html = strip.innerHTML;
+    assert.ok(html.indexOf("<h2") < html.indexOf("app-store-badge"), "the badge sits under the heading");
+  });
 
-test("ascend (live): the live-only copy renders and the waitlist copy is gone", () => {
-  const strings = joinStrings(pageStrings(livePage("ascend.html")));
-  for (const id of ["ascend.pricing", "ascend.cta.heading.live", "ascend.alt.badge", "meta.ascend.description.live"]) {
-    assert.ok(strings.includes(copy[id]), `missing ${id}`);
-  }
-  for (const id of ["ascend.cta.heading.waitlist", "signup.note.ascend"]) {
-    assert.ok(!strings.includes(copy[id]), `${id} still shows after launch`);
-  }
+  test("labels the Ascend card On the App Store", () => {
+    assert.equal(text(one(root, ".app-card--ascend .app-card-label")), copy["home.cards.ascend.label.live"]);
+  });
+
+  test("uses the live hero line and meta description", () => {
+    const hero = one(root, "main#main > section.hero");
+    assert.ok(
+      hero.querySelectorAll("p").some((p) => text(p) === copy["home.hero.line.live"]),
+      "the live hero line",
+    );
+    assert.equal(
+      one(root, 'meta[name="description"]').getAttribute("content"),
+      copy["meta.home.description.live"],
+    );
+  });
 });
