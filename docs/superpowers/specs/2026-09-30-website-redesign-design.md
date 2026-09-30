@@ -31,7 +31,7 @@ launch; Sillage shown as "in development".
 | 4 | Typeface | The device's own font (SF Pro on Apple devices), Inter elsewhere, self-hosted |
 | 5 | Logo | Text wordmark now; the Aineara logo is a separate later project (the layout leaves room for a mark) |
 | 6 | Sillage page | One short screen in Sillage's own look, keeping its waitlist |
-| 7 | Ascend headline | "Train smarter. Eat better. Go further." with the App Store headline as the subhead |
+| 7 | Ascend headline | "Train smarter. Eat better. Go further." with the subhead "Training and nutrition in one app, with calorie targets that can adapt to your progress." (revised in planning: the App Store headline's "a calorie target that corrects itself" isn't true of the app) |
 | 8 | Build | Eleventy templates, deployed by Cloudflare Pages |
 
 Background research (Ascend, Sillage and the current site, with an adversarial check of every value)
@@ -179,7 +179,10 @@ web.
    `/ascend`) and a smaller Sillage card (Sillage dark/cream scope, gold hairline, "In development",
    link to `/sillage`). UnderRated is removed.
 4. **Principles:** the three existing principles ("Intelligence, not complexity", "Precision over
-   abundance", "Built for people, not personas") in a hairline grid, copy kept.
+   abundance", "Built for people, not personas") in a hairline grid. Copy kept, except principle 2's
+   unprovable opening ("We ship fewer features than anyone else in the space"), which becomes "We'd
+   rather ship fewer features and get each one right. Restraint is a design principle, not a
+   limitation."
 5. **About the studio:** one short paragraph in the plain voice. It replaces "AI-native, from the
    ground up" and does not claim data stays on the device.
 6. **Waitlist strip:** "Get notified when Ascend launches", source `aineara-homepage`.
@@ -188,12 +191,14 @@ web.
 ### 5.2 Ascend `/ascend`
 
 1. **Hero** (full-bleed navy gradient): the Ascend mark with its pulse, label "Ascend by Aineara",
-   heading "Train smarter. Eat better. Go further.", subhead "Training and nutrition in one app — with
-   a calorie target that corrects itself.", and the signup (source `ascend-landing`) while
+   heading "Train smarter. Eat better. Go further.", subhead "Training and nutrition in one app, with
+   calorie targets that can adapt to your progress.", and the signup (source `ascend-landing`) while
    `status` is `waitlist`, or Apple's official "Download on the App Store" badge once `live`.
-2. **Screenshot rail:** Today, Nutrition, Training load, Plans, Weekly report (light screenshots from
-   `Ascend/docs/screenshots/`, resized at build time). Replace them with refreshed App Store
-   screenshots when those exist; the pre-submission audit notes some are out of date.
+2. **Screenshot rail:** Today, Nutrition, Plans, Weekly report (light screenshots from
+   `Ascend/docs/screenshots/`, resized at build time). Training load is left out until it's re-shot
+   on the current app (its card says "minimises injury risk", a claim the app has walked back).
+   Replace them with refreshed App Store screenshots when those exist; the pre-submission audit notes
+   some are out of date.
 3. **Train / Eat / Stay with it:** three feature sections (following the App Store listing's
    structure), each a screenshot and three or four plain bullets. Only claims the current app backs
    up; general-wellness wording (no claims about preventing injury or treating conditions). Every
@@ -320,3 +325,12 @@ motion; JavaScript disabled. After deploy, one real signup per form with the own
 - Rewriting the Terms of Use (needs legal review).
 - Ascend app changes, including adopting `#1560DC` for blue text on light surfaces.
 - The Sillage app.
+
+## 10. Decisions made during planning
+
+The implementation plan (`docs/superpowers/plans/2026-09-30-website-redesign.md`) records 19 further
+owner decisions (D1–D19), all accepted at their recommended defaults on 2026-09-30. The ones that
+change this spec are folded in above: the Ascend subhead (§2 row 7, §5.2), principle 2's wording
+(§5.1) and leaving out the Training load screenshot (§5.2). The rest (for example turning off
+Cloudflare's email obfuscation, building on Node 26, Latin-only Inter, and sending no confirmation
+email for an unknown source) are implementation choices recorded in the plan.
