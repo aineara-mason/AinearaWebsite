@@ -1,0 +1,20 @@
+{
+  "name": "aineara-website",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve",
+    "clean": "rm -rf _site _site-live",
+    "pretest": "npm run clean && npm run build -- --quiet",
+    "test": "node --test \"tests/**/*.test.js\""
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "3.1.6",
+    "@11ty/eleventy-img": "7.0.0",
+    "node-html-parser": "9.0.4"
+  }
+}

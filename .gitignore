@@ -27,3 +27,6 @@ npm-debug.log*
 
 # Brainstorming mockups (visual companion)
 .superpowers/
+
+# Build output
+_site/
