@@ -13,6 +13,7 @@ import {
   resolveReference,
   pageStrings,
 } from "./helpers/site.js";
+import { SOURCES, appForSource } from "../src/assets/js/lib/signup.js";
 
 const BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js";
 
@@ -205,4 +206,41 @@ test("the Inter font and both licences are published", () => {
 
 test("_site has no junk files", () => {
   assert.deepEqual(listFiles(SITE_DIR).filter(isJunk), []);
+});
+
+// ── Task 5: signup forms ──────────────────────────────────────────────
+// No page includes the partial until Task 6, so this passes with 0 forms
+// for now; the diagnostic line shows how many forms were really checked.
+test("signup forms post one known source and have a no-JavaScript note", (t) => {
+  let checked = 0;
+  for (const rel of templated) {
+    for (const form of html(rel).querySelectorAll("form.signup-form")) {
+      checked += 1;
+      const source = form.getAttribute("data-source");
+      const where = `${rel} form[data-source="${source}"]`;
+      assert.equal(form.getAttribute("method"), "post", `${where}: method`);
+      assert.equal(form.hasAttribute("action"), false, `${where}: must not have an action`);
+      assert.ok(SOURCES.includes(source), `${where}: unknown source`);
+      assert.equal(form.getAttribute("data-app"), appForSource(source), `${where}: data-app`);
+      const inputs = form.querySelectorAll('input[type="email"]');
+      assert.equal(inputs.length, 1, `${where}: needs exactly one email input`);
+      const id = inputs[0].getAttribute("id");
+      assert.ok(id && form.querySelector(`label[for="${id}"]`), `${where}: no label[for="${id}"]`);
+      const noscript = form.parentNode.childNodes.find((node) => node.rawTagName?.toLowerCase() === "noscript");
+      assert.ok(noscript, `${where}: no sibling <noscript>`);
+      assert.ok(
+        noscript.querySelector('.signup-nojs a[href="mailto:hello@aineara.com"]'),
+        `${where}: the no-JS note needs a mailto:hello@aineara.com link`,
+      );
+    }
+  }
+  t.diagnostic(`${checked} signup form(s) checked`);
+});
+
+test("no page uses the dead ascend-homepage source", () => {
+  for (const rel of PAGES) {
+    const file = path.join(SITE_DIR, rel);
+    if (!existsSync(file)) continue;
+    assert.equal(readFileSync(file, "utf8").includes("ascend-homepage"), false, `${rel} contains ascend-homepage`);
+  }
 });

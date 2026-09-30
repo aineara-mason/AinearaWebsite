@@ -1,0 +1,18 @@
+{# Waitlist signup form (spec §6.3). Before including this file the caller sets
+   signup = { id: "<instance id>", app: "ascend" or "sillage", source: "<source>" }.
+   Every string comes from copy.js. The form has no action on purpose. #}
+<div class="signup">
+  <form class="signup-form" method="post" novalidate data-signup data-app="{{ signup.app }}" data-source="{{ signup.source }}"
+        data-msg-success="{{ copy['signup.success.' + signup.app] }}" data-msg-invalid="{{ copy['signup.invalid'] }}"
+        data-msg-error="{{ copy['signup.error'] }}" data-msg-sending="{{ copy['signup.sending'] }}">
+    <label class="visually-hidden" for="signup-email-{{ signup.id }}">{{ copy['signup.label'] }}</label>
+    <div class="signup-row">
+      <input class="field" id="signup-email-{{ signup.id }}" type="email" name="email" placeholder="{{ copy['signup.placeholder'] }}" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" required aria-describedby="signup-note-{{ signup.id }} signup-status-{{ signup.id }}">
+      <button class="button button--primary" type="submit">{{ copy['signup.button'] }}</button>
+    </div>
+    <p class="signup-note" id="signup-note-{{ signup.id }}">{{ copy['signup.note.' + signup.app] }}</p>
+    <p class="signup-status" id="signup-status-{{ signup.id }}" role="status" aria-live="polite"></p>
+  </form>
+  {%- set nojsParts = copy['signup.nojs.' + signup.app].split(site.emails.hello) %}
+  <noscript><p class="signup-nojs">{{ nojsParts[0] }}<a href="mailto:{{ site.emails.hello }}">{{ site.emails.hello }}</a>{{ nojsParts[1] }}</p></noscript>
+</div>

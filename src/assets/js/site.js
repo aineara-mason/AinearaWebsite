@@ -1,6 +1,7 @@
 // Site-wide behaviour, loaded as an ES module on every page (spec §6.1-6.2).
 // Everything here is an enhancement: every page works without it.
 import { readSavedTheme, saveTheme, otherTheme } from "./lib/theme.js";
+import { isValidEmail, submitSignup } from "./lib/signup.js";
 
 const root = document.documentElement;
 
@@ -92,3 +93,87 @@ function initReveal() {
 initThemeToggle();
 initNavMenu();
 initReveal();
+
+/**
+ * Signup forms (spec §6.3). Messages come only from the form's data-msg-*
+ * attributes and the source only from data-source, so the copy stays in
+ * src/_data/copy.js and the source allow-list stays in lib/signup.js.
+ */
+function wireSignupForms() {
+  for (const form of document.querySelectorAll("form[data-signup]")) {
+    const field = form.querySelector('input[type="email"]');
+    const button = form.querySelector('button[type="submit"]');
+    const status = form.querySelector(".signup-status");
+    if (!field || !button || !status) continue;
+
+    const buttonLabel = button.textContent;
+    const { msgSuccess, msgInvalid, msgError, msgSending } = form.dataset;
+
+    const clearMessages = () => {
+      field.classList.remove("is-invalid");
+      field.removeAttribute("aria-invalid");
+      status.textContent = "";
+    };
+
+    const showInvalid = () => {
+      field.classList.add("is-invalid");
+      field.setAttribute("aria-invalid", "true");
+      status.textContent = msgInvalid;
+      field.focus();
+    };
+
+    const setSending = (sending) => {
+      form.classList.toggle("is-sending", sending);
+      if (sending) form.setAttribute("aria-busy", "true");
+      else form.removeAttribute("aria-busy");
+      button.disabled = sending;
+      button.textContent = sending ? msgSending : buttonLabel;
+    };
+
+    field.addEventListener("input", clearMessages);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (form.classList.contains("is-sending")) return;
+      if (!isValidEmail(field.value)) {
+        showInvalid();
+        return;
+      }
+      clearMessages();
+      // Disabling the button drops its focus to <body>. Remember whether the
+      // visitor pressed it, so a failure can hand focus back (WCAG 2.4.3).
+      const buttonHadFocus = document.activeElement === button;
+      setSending(true);
+
+      let result;
+      try {
+        result = await submitSignup({ email: field.value, source: form.dataset.source });
+      } catch {
+        result = "error"; // RangeError: data-source is not one of the three known sources
+      }
+
+      if (result === "success") {
+        const done = document.createElement("p");
+        done.className = "signup-done";
+        done.tabIndex = -1;
+        done.textContent = msgSuccess;
+        form.replaceWith(done);
+        done.focus();
+        return;
+      }
+
+      setSending(false);
+      if (result === "invalid") {
+        showInvalid();
+        return;
+      }
+      // Only if focus is still lost: never pull it back from where the
+      // visitor has moved on to while the form was sending.
+      const focusLost = !document.activeElement || document.activeElement === document.body;
+      if (buttonHadFocus && focusLost) button.focus();
+      status.textContent = msgError;
+    });
+  }
+}
+
+wireSignupForms();

@@ -582,3 +582,102 @@ html:not(.js) .nav-toggle {
     transform: none;
   }
 }
+
+/* ─── Signup form ───
+   One waitlist form for every page (spec §6.3). The invalid border is
+   .field.is-invalid, under Controls and each scope. */
+.signup {
+  width: 100%;
+}
+
+.signup-form {
+  margin: 0;
+}
+
+/* Stacked on phones; one row from the tablet breakpoint. */
+.signup-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.signup-row .field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.signup-row .button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .signup-row {
+    flex-direction: row;
+  }
+}
+
+.signup-note,
+.signup-status,
+.signup-done {
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+}
+
+.signup-note {
+  margin-top: var(--space-3);
+  color: var(--color-text-secondary);
+}
+
+.scope-ascend .signup-note {
+  color: var(--ascend-text-secondary);
+}
+
+.scope-sillage .signup-note {
+  color: var(--sillage-text-secondary);
+}
+
+/* The status line only ever holds the invalid or the failure message
+   (sending changes the button, success replaces the form), so its text is
+   always in the error colour. It stays in the accessibility tree while
+   empty so role=status announces the first message. */
+.signup-status {
+  color: var(--color-error);
+}
+
+.scope-ascend .signup-status {
+  color: var(--ascend-error);
+}
+
+.signup-status:not(:empty) {
+  margin-top: var(--space-2);
+}
+
+.signup-form.is-sending .button {
+  cursor: progress;
+}
+
+.signup-done {
+  font-size: var(--text-body);
+  font-weight: var(--weight-card-title);
+}
+
+/* Without JavaScript the form can't send, so it is hidden and the
+   <noscript> note shows instead. The note only exists in the DOM when
+   scripting is off, so it needs no rule to hide it otherwise. */
+html:not(.js) .signup-form {
+  display: none;
+}
+
+noscript .signup-nojs {
+  display: block;
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+}
+
+noscript .signup-nojs a {
+  color: inherit;
+  text-decoration: underline;
+}
