@@ -24,16 +24,15 @@ function lucideIcon(name) {
 export default function (eleventyConfig) {
   if (process.versions.bun) throw new Error("Run Eleventy with real Node: PATH=\"/opt/homebrew/bin:$PATH\"");
 
-  // Legacy pages keep coming from public/ until their templates replace
-  // them. Task 11 removes this line with the last of public/.
-  eleventyConfig.addPassthroughCopy({ public: "/" });
-
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy({
     "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2": "assets/fonts/inter-latin-wght-normal.woff2",
     "node_modules/@fontsource-variable/inter/LICENSE": "assets/licenses/inter-OFL.txt",
     "node_modules/lucide-static/LICENSE": "assets/licenses/lucide-LICENSE.txt",
   });
+  // Neither is a template format, so they reach _site only through passthrough copy.
+  eleventyConfig.addPassthroughCopy("src/_redirects");
+  eleventyConfig.addPassthroughCopy("src/robots.txt");
 
   // Finder duplicates such as "index 2.njk" would render and clash on permalinks.
   eleventyConfig.ignores.add("src/**/* 2.*");

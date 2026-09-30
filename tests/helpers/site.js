@@ -1,7 +1,8 @@
 // Shared helpers for the tests that read the built site in _site/.
-// Task 1 exports: ROOT, SITE_DIR, PUBLIC_DIR, listFiles, isJunk.
+// Task 1 exports: ROOT, SITE_DIR, listFiles, isJunk.
 // Task 4 exports: PAGES, readHtml, isTemplated, templatedPages,
 // resolveReference, norm, pageStrings.
+// Task 11 exports: pngSize.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +10,6 @@ import { parse } from "node-html-parser";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const SITE_DIR = path.join(ROOT, "_site");
-export const PUBLIC_DIR = path.join(ROOT, "public");
 
 // Every file under dir, as sorted POSIX paths relative to dir, dotfiles included.
 export function listFiles(dir) {
@@ -100,4 +100,21 @@ export function pageStrings(root) {
     }
   }
   return parts.filter(Boolean).join("\n");
+}
+
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+/**
+ * Width and height of a PNG, read from its IHDR chunk (bytes 16-23).
+ * Throws if the buffer isn't a PNG.
+ */
+export function pngSize(buffer) {
+  if (
+    buffer.length < 24 ||
+    !buffer.subarray(0, 8).equals(PNG_SIGNATURE) ||
+    buffer.toString("latin1", 12, 16) !== "IHDR"
+  ) {
+    throw new Error("not a PNG file");
+  }
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
 }

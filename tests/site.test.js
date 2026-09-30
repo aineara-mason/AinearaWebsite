@@ -14,6 +14,19 @@ import {
   pageStrings,
 } from "./helpers/site.js";
 import { SOURCES, appForSource } from "../src/assets/js/lib/signup.js";
+// Task 11 imports, under their own names.
+import { test as t11Test } from "node:test";
+import t11Assert from "node:assert/strict";
+import { existsSync as t11Exists, readFileSync as t11Read } from "node:fs";
+import { join as t11Join } from "node:path";
+import {
+  PAGES as T11_PAGES,
+  SITE_DIR as T11_SITE_DIR,
+  isTemplated as t11IsTemplated,
+  pngSize as t11PngSize,
+  readHtml as t11ReadHtml,
+} from "./helpers/site.js";
+import t11Site from "../src/_data/site.js";
 
 const BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js";
 
@@ -243,4 +256,92 @@ test("no page uses the dead ascend-homepage source", () => {
     if (!existsSync(file)) continue;
     assert.equal(readFileSync(file, "utf8").includes("ascend-homepage"), false, `${rel} contains ascend-homepage`);
   }
+});
+
+// ── Task 11: favicons, link-preview images, the generated sitemap, robots.txt,
+// _redirects, canonical URLs, and public/ retired.
+
+// Pinned bytes, from public/robots.txt:1-4 and public/_redirects:1-2.
+const T11_ROBOTS = "User-agent: *\nAllow: /\n\nSitemap: https://aineara.com/sitemap.xml\n";
+const T11_REDIRECTS = "# Redirect rules: <source> <destination> [status]\n/home / 301\n";
+// D9: terms and 404 are noindex and stay out of the sitemap.
+const T11_SITEMAP_LOCS = [
+  "https://aineara.com/",
+  "https://aineara.com/ascend",
+  "https://aineara.com/privacy",
+  "https://aineara.com/sillage",
+  "https://aineara.com/support",
+];
+const T11_OG_PAGES = { "index.html": "home", "ascend.html": "ascend", "sillage.html": "sillage" };
+const t11Bytes = (rel) => t11Read(t11Join(T11_SITE_DIR, rel));
+
+t11Test("T11: every page is a template and the legacy folders are gone", () => {
+  for (const rel of T11_PAGES) {
+    t11Assert.ok(t11IsTemplated(t11ReadHtml(rel)), `${rel} is not built from a template`);
+  }
+  for (const dir of ["css", "js", "public"]) {
+    t11Assert.equal(t11Exists(t11Join(T11_SITE_DIR, dir)), false, `_site/${dir} should not exist`);
+  }
+});
+
+t11Test("T11: every page links the favicon set, and the icons have their pinned sizes", () => {
+  for (const rel of T11_PAGES) {
+    const root = t11ReadHtml(rel);
+    const svg = root.querySelector('link[rel="icon"][type="image/svg+xml"]');
+    const png = root.querySelector('link[rel="icon"][type="image/png"]');
+    const touch = root.querySelector('link[rel="apple-touch-icon"]');
+    t11Assert.equal(svg?.getAttribute("href"), "/assets/img/favicon.svg", `${rel}: SVG favicon link`);
+    t11Assert.equal(png?.getAttribute("href"), "/assets/img/favicon-32.png", `${rel}: PNG favicon link`);
+    t11Assert.equal(png?.getAttribute("sizes"), "32x32", `${rel}: PNG favicon sizes`);
+    t11Assert.equal(touch?.getAttribute("href"), "/assets/img/apple-touch-icon.png", `${rel}: apple-touch-icon link`);
+  }
+  const svgText = t11Bytes("assets/img/favicon.svg").toString("utf8");
+  t11Assert.match(svgText, /viewBox="0 0 32 32"/);
+  t11Assert.match(svgText, /rx="7"/);
+  t11Assert.match(svgText, /@media \(prefers-color-scheme: dark\)/);
+  t11Assert.doesNotMatch(svgText, /<text/, "the A must be a path, not text");
+  t11Assert.deepEqual(t11PngSize(t11Bytes("assets/img/favicon-32.png")), { width: 32, height: 32 });
+  const touchPng = t11Bytes("assets/img/apple-touch-icon.png");
+  t11Assert.deepEqual(t11PngSize(touchPng), { width: 180, height: 180 });
+  t11Assert.equal(touchPng[25], 2, "apple-touch-icon.png must be opaque RGB (PNG colour type 2)");
+});
+
+t11Test("T11: index, ascend and sillage link a 1200x630 PNG link-preview image", () => {
+  for (const [rel, og] of Object.entries(T11_OG_PAGES)) {
+    const content = t11ReadHtml(rel).querySelector('meta[property="og:image"]')?.getAttribute("content");
+    t11Assert.equal(content, `${t11Site.url}/assets/img/og/${og}.png`, `${rel}: og:image`);
+    const file = t11Join(T11_SITE_DIR, content.slice(t11Site.url.length));
+    t11Assert.ok(t11Exists(file), `${rel}: ${file} is missing`);
+    t11Assert.deepEqual(t11PngSize(t11Read(file)), { width: 1200, height: 630 }, `${rel}: og image size`);
+  }
+});
+
+t11Test("T11: sitemap.xml lists exactly the indexable pages, sorted", () => {
+  const xml = t11Bytes("sitemap.xml").toString("utf8");
+  t11Assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n'), "sitemap.xml starts with the XML declaration");
+  const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((match) => match[1]);
+  t11Assert.deepEqual(locs, T11_SITEMAP_LOCS);
+  t11Assert.doesNotMatch(xml, /<lastmod>/);
+});
+
+t11Test("T11: robots.txt and _redirects are byte-identical to the pinned contents", () => {
+  t11Assert.deepEqual(t11Bytes("robots.txt"), Buffer.from(T11_ROBOTS, "utf8"));
+  t11Assert.deepEqual(t11Bytes("_redirects"), Buffer.from(T11_REDIRECTS, "utf8"));
+});
+
+t11Test("T11: indexable pages have a canonical URL and noindex pages have none", () => {
+  const noindex = [];
+  for (const rel of T11_PAGES) {
+    const root = t11ReadHtml(rel);
+    const robots = root.querySelector('meta[name="robots"]')?.getAttribute("content") ?? "";
+    const canonical = root.querySelector('link[rel="canonical"]')?.getAttribute("href");
+    if (robots.includes("noindex")) {
+      noindex.push(rel);
+      t11Assert.equal(canonical, undefined, `${rel} is noindex but has a canonical link`);
+    } else {
+      const cleanPath = "/" + rel.replace(/index\.html$/, "").replace(/\.html$/, "");
+      t11Assert.equal(canonical, t11Site.url + cleanPath, `${rel}: canonical`);
+    }
+  }
+  t11Assert.deepEqual(noindex.sort(), ["404.html", "terms.html"]);
 });
