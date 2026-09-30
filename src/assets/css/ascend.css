@@ -1,0 +1,235 @@
+/* Ascend page (/ascend). Loaded after tokens.css and site.css.
+   The .scope-ascend colours, buttons and fields live in site.css; this file
+   lays the page out. Ascend sections use theme-independent tokens, so they
+   look the same in the dark and light themes, as in the app. */
+
+/* Mark pulse, as on the app's startup screen (spec §4.4). */
+@keyframes ascend-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+/* ── 1. Hero ─────────────────────────────────────────────────────── */
+.ascend-hero {
+  padding-block: var(--space-8) var(--space-9);
+  text-align: center;
+}
+.ascend-hero > .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+.ascend-mark {
+  display: block;
+  width: 96px;
+  height: 96px;
+  animation: ascend-pulse var(--duration-pulse) ease-in-out infinite alternate;
+}
+.scope-ascend .label {
+  color: var(--ascend-text-secondary);
+}
+.ascend-hero .label,
+.ascend-hero .display {
+  margin: 0;
+}
+.ascend-hero .display {
+  max-width: 16ch;
+}
+.ascend-hero .display + p {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--text-card-title);
+  line-height: var(--leading-body);
+  color: var(--ascend-text-secondary);
+}
+.ascend-hero .signup,
+.ascend-cta .signup {
+  width: 100%;
+  max-width: 30rem;
+  margin-top: var(--space-4);
+}
+/* Apple: at least a quarter of the badge height as clear space, 40px minimum height. */
+.ascend-hero .app-store-badge {
+  display: inline-block;
+  margin-top: var(--space-5);
+}
+.app-store-badge img {
+  display: block;
+  width: auto;
+  height: 40px;
+}
+
+/* ── 2. Screenshot rail ──────────────────────────────────────────── */
+.screen-rail {
+  padding-block: var(--space-7) var(--space-5);
+}
+ul.screen-rail-list {
+  display: flex;
+  gap: var(--space-5);
+  max-width: var(--container-page);
+  margin: 0 auto;
+  padding: var(--space-5) var(--gutter) var(--space-6);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+}
+.screen-rail-list > li {
+  flex: 0 0 min(70vw, 320px);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+@media (min-width: 1024px) {
+  /* All four fit in one row on desktop, so nothing is cut off. */
+  .screen-rail-list > li {
+    flex: 0 1 320px;
+  }
+  .screen-rail-list {
+    justify-content: center;
+  }
+}
+
+/* Screenshot frame: the site's only shadow (spec §4.3). */
+.screenshot {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-screenshot);
+}
+.screenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ── 3. Train / Eat / Stay with it ───────────────────────────────── */
+.feature > .container {
+  display: grid;
+  gap: var(--space-7);
+  align-items: center;
+}
+.feature .label {
+  margin: 0;
+  color: var(--ascend-accent-text);
+}
+.feature .heading {
+  margin: var(--space-3) 0 var(--space-5);
+}
+.feature-list {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.feature-list > li {
+  position: relative;
+  padding-inline-start: var(--space-5);
+}
+.feature-list > li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--ascend-accent-text);
+}
+.feature .screenshot {
+  width: min(70vw, 320px);
+  margin-inline: auto;
+}
+@media (min-width: 1024px) {
+  .feature > .container {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-8);
+  }
+  #eat > .container {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+  #eat .screenshot {
+    order: -1;
+  }
+}
+
+/* ── 4. Your data ────────────────────────────────────────────────── */
+.your-data .heading {
+  margin: 0 0 var(--space-5);
+}
+.your-data ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.your-data li {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-hairline);
+}
+.your-data li:last-child {
+  border-bottom: 1px solid var(--color-hairline);
+}
+.your-data ul + p {
+  margin: var(--space-5) 0 0;
+}
+.your-data a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── 5. Pricing ──────────────────────────────────────────────────── */
+.pricing .label {
+  margin: 0 0 var(--space-3);
+}
+.pricing p {
+  margin: 0;
+}
+.pricing .label + p {
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-card-title);
+}
+.pricing p + p {
+  margin-top: var(--space-3);
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+}
+
+/* ── 6. Final call to action ─────────────────────────────────────── */
+.ascend-cta {
+  padding-block: var(--space-9);
+  text-align: center;
+}
+.ascend-cta > .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ascend-cta .heading {
+  margin: 0;
+  max-width: 20ch;
+}
+.ascend-cta .heading a {
+  color: inherit;
+}
+.disclaimer {
+  margin: var(--space-6) 0 0;
+  font-size: var(--text-caption);
+  color: var(--ascend-text-secondary);
+}
+
+/* site.css already turns off every animation under reduced motion; this
+   names the pulse explicitly (spec §4.4). */
+@media (prefers-reduced-motion: reduce) {
+  .ascend-mark {
+    animation: none;
+  }
+}

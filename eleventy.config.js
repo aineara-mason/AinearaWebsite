@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import path from "node:path";
+import Image from "@11ty/eleventy-img";
 
 export const config = { dir: { input: "src", output: "_site", includes: "_includes", data: "_data" }, templateFormats: ["njk"], htmlTemplateEngine: "njk" };
 
@@ -40,4 +42,20 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("cleanUrl", (u) => u.replace(/index\.html$/, "").replace(/\.html$/, ""));
 
   eleventyConfig.addShortcode("icon", lucideIcon);
+
+  // T6: responsive WebP images from originals in src/_images/ (never published).
+  eleventyConfig.addShortcode("image", async function (src, alt, widths, sizes, loading = "lazy", className = "") {
+    if (alt === undefined) throw new Error(`image shortcode: missing alt for ${src} (pass "" for a decorative image)`);
+    return Image(src, {
+      widths,
+      formats: ["webp"],
+      outputDir: path.join(eleventyConfig.directories.output, "assets/img/"),
+      urlPath: "/assets/img/",
+      returnType: "html",
+      htmlOptions: {
+        imgAttributes: { alt, sizes, loading, decoding: "async", class: className },
+        fallback: "largest",
+      },
+    });
+  });
 }

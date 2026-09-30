@@ -1,0 +1,93 @@
+---
+layout: layouts/base.njk
+permalink: ascend.html
+titleId: title.ascend
+descriptionId: meta.ascend.description.waitlist
+descriptionLiveId: meta.ascend.description.live
+og: ascend
+pageStyles: ["/assets/css/ascend.css"]
+bodyClass: page-ascend
+---
+<main id="main">
+  {# 1. Hero: full-bleed navy, the same in both themes (spec §5.2 item 1; subhead per D5). #}
+  <section class="ascend-hero scope-ascend">
+    <div class="container">
+      {% set markSizes = "96px" %}{% set markLoading = "eager" %}{% set markClass = "ascend-mark" %}
+      {% include "partials/ascend-mark.njk" %}
+      <p class="label">{{ copy["ascend.hero.label"] }}</p>
+      <h1 class="display">{{ copy["ascend.hero.heading"] }}</h1>
+      <p>{{ copy["ascend.hero.subhead"] }}</p>
+      {% if site.apps.ascend.live %}
+        {% include "partials/app-store-badge.njk" %}
+      {% else %}
+        {% set signup = { id: "ascend-hero", app: "ascend", source: "ascend-landing" } %}
+        {% include "partials/signup.njk" %}
+      {% endif %}
+    </div>
+  </section>
+
+  {# 2. Screenshot rail: horizontal scroll-snap list, keyboard-scrollable. #}
+  <section id="screens" class="screen-rail" aria-label="{{ copy['a11y.rail'] }}">
+    <ul class="screen-rail-list" role="list" tabindex="0">
+      {% asyncEach key in ascendScreens.rail %}
+        {% set shot = ascendScreens.items[key] %}
+        <li>{% include "partials/screenshot.njk" %}</li>
+      {% endeach %}
+    </ul>
+  </section>
+
+  {# 3. Train / Eat / Stay with it, each paired with one screenshot (D6). #}
+  {% asyncEach featureId in ["train", "eat", "stay"] %}
+    {% set shot = ascendScreens.items[ascendScreens.features[featureId]] %}
+    <section id="{{ featureId }}" class="section{% if featureId == "eat" %} section--alt{% endif %} feature reveal">
+      <div class="container">
+        <div>
+          <p class="label">{{ copy["ascend." + featureId + ".label"] }}</p>
+          <h2 class="heading">{{ copy["ascend." + featureId + ".heading"] }}</h2>
+          <ul class="feature-list" role="list">
+            {% for n in [1, 2, 3, 4] %}
+              <li>{{ copy["ascend." + featureId + "." + n] }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% include "partials/screenshot.njk" %}
+      </div>
+    </section>
+  {% endeach %}
+
+  {# 4. Your data: wording matches the privacy policy. #}
+  <section id="your-data" class="section section--alt your-data reveal">
+    <div class="container container--reading">
+      <h2 class="heading">{{ copy["ascend.data.heading"] }}</h2>
+      <ul role="list">
+        {% for n in [1, 2, 3, 4] %}
+          <li>{{ copy["ascend.data." + n] }}</li>
+        {% endfor %}
+      </ul>
+      <p><a href="/privacy">{{ copy["ascend.data.link"] }}{% icon "arrow-right" %}</a></p>
+    </div>
+  </section>
+
+  {# 5. Pricing without prices (D19). #}
+  <section id="pricing" class="section pricing reveal">
+    <div class="container container--reading">
+      <h2 class="label">{{ copy["ascend.pricing.label"] }}</h2>
+      <p>{{ copy["ascend.pricing"] if site.apps.ascend.live else copy["ascend.pricing.waitlist"] }}</p>
+      <p>{{ copy["ascend.pricing.note"] }}</p>
+    </div>
+  </section>
+
+  {# 6. Final call to action on navy. When live, the heading links to the App Store: no second badge (D7). #}
+  <section id="get-ascend" class="ascend-cta scope-ascend">
+    <div class="container">
+      {% if site.apps.ascend.live %}
+        <h2 class="heading"><a href="{{ site.apps.ascend.appStoreUrl }}">{{ copy["ascend.cta.heading.live"] }}</a></h2>
+      {% else %}
+        <h2 class="heading">{{ copy["ascend.cta.heading.waitlist"] }}</h2>
+        {% set signup = { id: "ascend-cta", app: "ascend", source: "ascend-landing" } %}
+        {% include "partials/signup.njk" %}
+      {% endif %}
+      <p class="disclaimer">{{ copy["ascend.cta.disclaimer"] }}</p>
+    </div>
+  </section>
+</main>
