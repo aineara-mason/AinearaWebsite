@@ -19,11 +19,13 @@ function currentTheme() {
 
 // The head script already chose the starting theme. The toggle saves a
 // choice only when it is clicked; until then the page follows the device
-// setting live.
+// setting live. A click also wins for the rest of the visit, so a choice the
+// browser won't let us save still isn't undone by the device.
 function initThemeToggle() {
   const toggle = document.querySelector(".theme-toggle");
   if (!toggle) return;
   const storage = localStore();
+  let chosen = false;
   const syncLabel = () => {
     const label = currentTheme() === "light" ? toggle.dataset.labelToDark : toggle.dataset.labelToLight;
     if (label) toggle.setAttribute("aria-label", label);
@@ -32,6 +34,7 @@ function initThemeToggle() {
   syncLabel();
   toggle.hidden = false;
   toggle.addEventListener("click", () => {
+    chosen = true;
     const next = otherTheme(currentTheme());
     root.setAttribute("data-theme", next);
     saveTheme(storage, next);
@@ -41,7 +44,7 @@ function initThemeToggle() {
   if (typeof window.matchMedia !== "function") return;
   const media = window.matchMedia("(prefers-color-scheme: light)");
   const followDevice = (event) => {
-    if (readSavedTheme(storage) !== null) return;
+    if (chosen || readSavedTheme(storage) !== null) return;
     root.setAttribute("data-theme", event.matches ? "light" : "dark");
     syncLabel();
   };

@@ -158,7 +158,17 @@ class FakeIntersectionObserver {
 
 // Builds the parts of a page that site.js looks for: the theme toggle, the
 // mobile menu with two links, and three fade-in sections.
-function installDom({ theme = "dark", saved = {}, intersectionObserver = null, themeToggleThrows = false } = {}) {
+// `storage` replaces the working localStorage (null for none), and
+// `localStorageThrows` makes reading window.localStorage itself throw, as
+// some browsers do when site data is blocked.
+function installDom({
+  theme = "dark",
+  saved = {},
+  storage = fakeStorage(saved),
+  localStorageThrows = false,
+  intersectionObserver = null,
+  themeToggleThrows = false,
+} = {}) {
   const doc = new FakeDocument();
   const html = doc.documentElement;
   html.setAttribute("data-theme", theme);
@@ -190,9 +200,7 @@ function installDom({ theme = "dark", saved = {}, intersectionObserver = null, t
   const reveals = [1, 2, 3].map(() => new FakeElement(doc, "section", { classes: ["reveal"], parent: body }));
 
   const changeListeners = [];
-  const storage = fakeStorage(saved);
   const win = {
-    localStorage: storage,
     matchMedia: (query) => ({
       media: query,
       matches: false,
@@ -201,6 +209,15 @@ function installDom({ theme = "dark", saved = {}, intersectionObserver = null, t
       },
     }),
   };
+  if (localStorageThrows) {
+    Object.defineProperty(win, "localStorage", {
+      get() {
+        throw new Error("storage is blocked");
+      },
+    });
+  } else {
+    win.localStorage = storage;
+  }
   if (intersectionObserver) win.IntersectionObserver = intersectionObserver;
 
   globalThis.window = win;
@@ -271,6 +288,33 @@ test("a choice saved on an earlier visit stops the device from changing the them
   page.deviceChange(false);
   assert.equal(page.html.getAttribute("data-theme"), "light");
 });
+
+// With storage blocked the choice can't be saved, but it must still win over
+// the device for the rest of the visit (spec §2 decision 3, §6.1).
+const blockedStorage = {
+  getItem() {
+    throw new Error("storage is blocked");
+  },
+  setItem() {
+    throw new Error("storage is blocked");
+  },
+};
+for (const [when, options] of [
+  ["storage throws on every read and write", { storage: blockedStorage }],
+  ["there is no storage", { storage: null }],
+  ["reading window.localStorage throws", { localStorageThrows: true }],
+]) {
+  test(`a toggle choice still beats the device when ${when}`, async () => {
+    const page = installDom({ theme: "dark", ...options });
+    await loadSiteJs();
+
+    page.themeToggle.dispatch("click");
+    assert.equal(page.html.getAttribute("data-theme"), "light");
+    page.deviceChange(false);
+    assert.equal(page.html.getAttribute("data-theme"), "light", "the device doesn't undo the click");
+    assert.equal(page.themeToggle.getAttribute("aria-label"), LABEL_TO_DARK);
+  });
+}
 
 test("the nav toggle opens the menu and Escape closes it and returns focus", async () => {
   const page = installDom();
