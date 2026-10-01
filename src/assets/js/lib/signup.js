@@ -18,15 +18,21 @@ export function appForSource(source) {
   return source === "sillage-landing" ? "sillage" : "ascend";
 }
 
-export async function submitSignup({ email, source, fetchImpl = globalThis.fetch }) {
+// A stalled connection would otherwise sit on "Sending…" until the browser
+// gives up, which can take minutes. A retry is harmless (already_subscribed).
+export const TIMEOUT_MS = 15000;
+
+export async function submitSignup({ email, source, fetchImpl = globalThis.fetch, timeoutMs = TIMEOUT_MS }) {
   if (!SOURCES.includes(source)) throw new RangeError(`Unknown signup source: ${source}`);
   let response;
   try {
-    response = await fetchImpl(ENDPOINT, {
+    const init = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.trim(), source }),
-    });
+    };
+    if (typeof globalThis.AbortSignal?.timeout === "function") init.signal = AbortSignal.timeout(timeoutMs);
+    response = await fetchImpl(ENDPOINT, init);
   } catch {
     return "error";
   }

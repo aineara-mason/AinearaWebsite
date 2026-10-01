@@ -67,6 +67,22 @@ test("submitSignup maps responses to success, invalid or error", async () => {
   }
 });
 
+test("submitSignup passes an AbortSignal so a stalled request can time out", async () => {
+  const { calls, fetchImpl } = recorder(() => reply(200, { success: true }));
+  await submitSignup({ email: "a@b.co", source: "ascend-landing", fetchImpl });
+  assert.ok(calls[0].init.signal instanceof AbortSignal);
+});
+
+test("submitSignup resolves error when the connection stalls past the timeout", { timeout: 2000 }, async () => {
+  // Never answers; rejects only when the request's signal aborts.
+  const fetchImpl = (url, init) =>
+    new Promise((resolve, reject) => {
+      init?.signal?.addEventListener("abort", () => reject(init.signal.reason));
+    });
+  const result = await submitSignup({ email: "a@b.co", source: "sillage-landing", fetchImpl, timeoutMs: 20 });
+  assert.equal(result, "error");
+});
+
 test("submitSignup rejects an unknown source before fetching", async () => {
   const { calls, fetchImpl } = recorder(() => reply(200, { success: true }));
   await assert.rejects(submitSignup({ email: "a@b.co", source: "evil", fetchImpl }), RangeError);
