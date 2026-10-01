@@ -1,13 +1,14 @@
 // Runs src/assets/js/site.js against a small fake DOM installed on
-// globalThis, so the theme toggle, mobile menu and reveal behaviour (spec
-// §6.1-6.2) are checked without a browser. Each case imports a fresh copy of
-// the module, because site.js wires everything up when it loads.
+// globalThis, so the theme toggle, mobile menu, reveal behaviour and signup
+// forms (spec §6.1-6.3) are checked without a browser. Each case imports a
+// fresh copy of the module, because site.js wires everything up when it loads.
 import { test, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT } from "./helpers/site.js";
 import { THEME_KEY } from "../src/assets/js/lib/theme.js";
+import copy from "../src/_data/copy.js";
 
 const SITE_JS = pathToFileURL(path.join(ROOT, "src/assets/js/site.js")).href;
 const LABEL_TO_LIGHT = "Switch to the light theme";
@@ -26,6 +27,9 @@ class FakeElement {
     this.id = id;
     this.parentElement = parent;
     this.hidden = false;
+    this.textContent = "";
+    this.value = "";
+    this.disabled = false;
     this.listeners = {};
     this.attributes = new Map(Object.entries(attributes));
     this.dataset = {};
@@ -63,23 +67,44 @@ class FakeElement {
     (this.listeners[type] ??= []).push(listener);
   }
 
+  // Resolves once every listener has finished, so a test can await an async
+  // handler such as the signup form's submit.
   dispatch(type, event = {}) {
     event.target ??= this;
-    for (const listener of this.listeners[type] ?? []) listener(event);
+    return Promise.all((this.listeners[type] ?? []).map((listener) => listener(event)));
   }
 
   focus() {
     this.ownerDocument.activeElement = this;
   }
 
-  // Only the selectors site.js uses: "tag", ".class" and "tag[attribute]".
+  contains(node) {
+    for (let current = node; current; current = current.parentElement) {
+      if (current === this) return true;
+    }
+    return false;
+  }
+
+  querySelectorAll(selector) {
+    return this.ownerDocument.elements.filter(
+      (element) => element !== this && this.contains(element) && element.matches(selector),
+    );
+  }
+
+  querySelector(selector) {
+    return this.querySelectorAll(selector)[0] ?? null;
+  }
+
+  // Only the selectors site.js uses: "tag", ".class", "tag[attribute]" and
+  // 'tag[attribute="value"]'.
   matches(selector) {
-    const match = /^([a-z]+)?(?:\.([\w-]+))?(?:\[([\w-]+)\])?$/.exec(selector);
+    const match = /^([a-z]+)?(?:\.([\w-]+))?(?:\[([\w-]+)(?:="([^"]*)")?\])?$/.exec(selector);
     if (!match || selector === "") throw new Error(`The fake DOM doesn't support the selector ${selector}`);
-    const [, tag, className, attribute] = match;
+    const [, tag, className, attribute, value] = match;
     if (tag && this.tagName !== tag.toUpperCase()) return false;
     if (className && !this.classList.contains(className)) return false;
     if (attribute && !this.attributes.has(attribute)) return false;
+    if (value !== undefined && this.attributes.get(attribute) !== value) return false;
     return true;
   }
 
@@ -220,15 +245,93 @@ function installDom({
   }
   if (intersectionObserver) win.IntersectionObserver = intersectionObserver;
 
+  // Frames run only when a test calls nextFrame().
+  const frames = [];
+  win.requestAnimationFrame = (callback) => frames.push(callback);
+
   globalThis.window = win;
   globalThis.document = doc;
   globalThis.Element = FakeElement;
+  globalThis.requestAnimationFrame = win.requestAnimationFrame;
   if (intersectionObserver) globalThis.IntersectionObserver = intersectionObserver;
 
   const deviceChange = (matches) => {
     for (const listener of changeListeners) listener({ matches });
   };
-  return { doc, html, themeToggle, navToggle, menu, link, label, reveals, storage, deviceChange };
+  const nextFrame = () => {
+    for (const callback of frames.splice(0)) callback();
+  };
+  return { doc, html, themeToggle, navToggle, menu, link, label, reveals, storage, deviceChange, frames, nextFrame };
+}
+
+// Adds a signup form as src/_includes/partials/signup.njk renders it, with
+// its messages from copy.js. Call it before loadSiteJs().
+function addSignupForm({ doc }, { id = "home", app = "ascend", source = "aineara-homepage" } = {}) {
+  const wrapper = new FakeElement(doc, "div", { classes: ["signup"], parent: doc.body });
+  const form = new FakeElement(doc, "form", {
+    classes: ["signup-form"],
+    attributes: {
+      method: "post",
+      novalidate: "",
+      "data-signup": "",
+      "data-app": app,
+      "data-source": source,
+      "data-msg-success": copy[`signup.success.${app}`],
+      "data-msg-invalid": copy["signup.invalid"],
+      "data-msg-error": copy["signup.error"],
+      "data-msg-sending": copy["signup.sending"],
+    },
+    parent: wrapper,
+  });
+  const label = new FakeElement(doc, "label", {
+    classes: ["visually-hidden"],
+    attributes: { for: `signup-email-${id}` },
+    parent: form,
+  });
+  label.textContent = copy["signup.label"];
+  const row = new FakeElement(doc, "div", { classes: ["signup-row"], parent: form });
+  const field = new FakeElement(doc, "input", {
+    id: `signup-email-${id}`,
+    classes: ["field"],
+    attributes: {
+      id: `signup-email-${id}`,
+      type: "email",
+      name: "email",
+      required: "",
+      "aria-describedby": `signup-note-${id} signup-status-${id}`,
+    },
+    parent: row,
+  });
+  const button = new FakeElement(doc, "button", {
+    classes: ["button", "button--primary"],
+    attributes: { type: "submit" },
+    parent: row,
+  });
+  button.textContent = copy["signup.button"];
+  const note = new FakeElement(doc, "p", {
+    id: `signup-note-${id}`,
+    classes: ["signup-note"],
+    attributes: { id: `signup-note-${id}` },
+    parent: form,
+  });
+  note.textContent = copy[`signup.note.${app}`];
+  const status = new FakeElement(doc, "p", {
+    id: `signup-status-${id}`,
+    classes: ["signup-status"],
+    attributes: { id: `signup-status-${id}`, role: "status", "aria-live": "polite" },
+    parent: form,
+  });
+  return { form, field, button, status };
+}
+
+const submit = (form) => form.dispatch("submit", { preventDefault() {} });
+
+// Holds the next fetch open until the test calls answer(status), so the test
+// can move focus while the form is sending.
+function pendingFetch(t) {
+  let respond;
+  const fetch = t.mock.method(globalThis, "fetch", () => new Promise((resolve) => (respond = resolve)));
+  return { fetch, answer: (status) => respond(new Response(null, { status })) };
 }
 
 afterEach(() => {
@@ -236,6 +339,7 @@ afterEach(() => {
   delete globalThis.document;
   delete globalThis.Element;
   delete globalThis.IntersectionObserver;
+  delete globalThis.requestAnimationFrame;
   FakeIntersectionObserver.instances = [];
 });
 
@@ -396,4 +500,88 @@ test("if the reveal script throws, every fade-in section is shown anyway", async
   const page = installDom({ intersectionObserver: BrokenObserver });
   await loadSiteJs();
   for (const section of page.reveals) assert.ok(section.classList.contains("is-visible"));
+});
+
+test("a 400 reply doesn't pull focus back from where the visitor moved on to", async (t) => {
+  const page = installDom();
+  const signup = addSignupForm(page);
+  await loadSiteJs();
+  const server = pendingFetch(t);
+
+  signup.field.value = "name@example.com";
+  signup.button.focus();
+  const sent = submit(signup.form);
+  assert.equal(server.fetch.mock.callCount(), 1);
+  page.link.focus(); // the visitor tabs to a link outside the form while it sends
+  server.answer(400);
+  await sent;
+
+  assert.equal(page.doc.activeElement, page.link, "focus stays on the link");
+  assert.equal(signup.status.textContent, copy["signup.invalid"]);
+  assert.ok(signup.field.classList.contains("is-invalid"));
+  assert.equal(signup.field.getAttribute("aria-invalid"), "true");
+  assert.equal(signup.button.disabled, false);
+});
+
+// Disabling the button may drop its focus to <body> (Safari and Firefox do;
+// Chromium keeps it on the disabled button). Either way it hasn't gone
+// anywhere the visitor chose, so the field takes it.
+for (const [where, whileSending] of [
+  ["is lost to <body>", (page) => page.doc.body.focus()],
+  ["is still on the button", () => {}],
+]) {
+  test(`a 400 reply focuses the field when focus ${where}`, async (t) => {
+    const page = installDom();
+    const signup = addSignupForm(page);
+    await loadSiteJs();
+    const server = pendingFetch(t);
+
+    signup.field.value = "name@example.com";
+    signup.button.focus();
+    const sent = submit(signup.form);
+    whileSending(page);
+    server.answer(400);
+    await sent;
+
+    assert.equal(page.doc.activeElement, signup.field);
+    assert.equal(signup.status.textContent, copy["signup.invalid"]);
+    assert.equal(signup.field.getAttribute("aria-invalid"), "true");
+  });
+}
+
+test("a repeat invalid submit clears the status, then writes it again on the next frame", async (t) => {
+  const fetch = t.mock.method(globalThis, "fetch", async () => new Response(null, { status: 200 }));
+  const page = installDom();
+  const signup = addSignupForm(page);
+  await loadSiteJs();
+
+  signup.field.value = "name@example";
+  signup.field.focus();
+  await submit(signup.form);
+  assert.equal(signup.status.textContent, copy["signup.invalid"]);
+  page.nextFrame();
+
+  await submit(signup.form);
+  assert.equal(signup.status.textContent, "", "the live region has to change to be announced again");
+  page.nextFrame();
+  assert.equal(signup.status.textContent, copy["signup.invalid"]);
+  assert.ok(signup.field.classList.contains("is-invalid"));
+  assert.equal(page.doc.activeElement, signup.field);
+  assert.equal(fetch.mock.callCount(), 0, "nothing is sent");
+});
+
+test("typing before that frame keeps the status clear", async () => {
+  const page = installDom();
+  const signup = addSignupForm(page);
+  await loadSiteJs();
+
+  signup.field.value = "name@example";
+  await submit(signup.form);
+  await submit(signup.form);
+  signup.field.value = "name@example.";
+  signup.field.dispatch("input");
+  page.nextFrame();
+
+  assert.equal(signup.status.textContent, "");
+  assert.ok(!signup.field.classList.contains("is-invalid"));
 });

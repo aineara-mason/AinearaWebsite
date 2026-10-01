@@ -134,11 +134,20 @@ function wireSignupForms() {
       status.textContent = "";
     };
 
-    const showInvalid = () => {
+    const showInvalid = ({ moveFocus = true } = {}) => {
       field.classList.add("is-invalid");
       field.setAttribute("aria-invalid", "true");
-      status.textContent = msgInvalid;
-      field.focus();
+      if (status.textContent === msgInvalid) {
+        // Writing the same text again isn't a change, so a screen reader may
+        // not announce it. Clear it, then write it back on the next frame.
+        status.textContent = "";
+        requestAnimationFrame(() => {
+          if (field.classList.contains("is-invalid")) status.textContent = msgInvalid;
+        });
+      } else {
+        status.textContent = msgInvalid;
+      }
+      if (moveFocus) field.focus();
     };
 
     const setSending = (sending) => {
@@ -159,7 +168,8 @@ function wireSignupForms() {
         return;
       }
       clearMessages();
-      // Disabling the button drops its focus to <body>. Remember whether the
+      // Disabling the button may drop its focus to <body> (Safari and Firefox
+      // do; Chromium keeps it on the disabled button). Remember whether the
       // visitor pressed it, so a failure can hand focus back (WCAG 2.4.3).
       const buttonHadFocus = document.activeElement === button;
       setSending(true);
@@ -182,13 +192,15 @@ function wireSignupForms() {
       }
 
       setSending(false);
+      // Only move focus if it is lost (or, for the field, still in this form):
+      // never pull it back from where the visitor has moved on to while the
+      // form was sending.
+      const active = document.activeElement;
+      const focusLost = !active || active === document.body;
       if (result === "invalid") {
-        showInvalid();
+        showInvalid({ moveFocus: focusLost || form.contains(active) });
         return;
       }
-      // Only if focus is still lost: never pull it back from where the
-      // visitor has moved on to while the form was sending.
-      const focusLost = !document.activeElement || document.activeElement === document.body;
       if (buttonHadFocus && focusLost) button.focus();
       status.textContent = msgError;
     });
