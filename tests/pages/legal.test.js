@@ -91,6 +91,19 @@ for (const name of LEGAL_PAGES) {
   });
 }
 
+// legalText reads th and td alike, so the snapshot can't tell if a row lost
+// its header. Each body row must start with one (WCAG 1.3.1).
+test("privacy.html table rows start with a row header", () => {
+  const rows = readHtml("privacy.html").querySelectorAll(".legal-table tbody tr");
+  assert.ok(rows.length > 0, "no .legal-table body rows found");
+  for (const row of rows) {
+    const first = row.childNodes.find((node) => node.nodeType === 1);
+    const label = row.text.trim().slice(0, 40);
+    assert.equal(first?.rawTagName?.toLowerCase(), "th", `this row doesn't start with a th: ${label}`);
+    assert.equal(first.getAttribute("scope"), "row", `this row's th has no scope="row": ${label}`);
+  }
+});
+
 test("only terms.html is noindex", () => {
   const robots = (name) =>
     readHtml(`${name}.html`).querySelector('meta[name="robots"]')?.getAttribute("content") ?? null;
