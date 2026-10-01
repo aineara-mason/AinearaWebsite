@@ -70,11 +70,15 @@ function initNavMenu() {
   });
 }
 
+function revealAll() {
+  document.querySelectorAll(".reveal").forEach((item) => item.classList.add("is-visible"));
+}
+
 function initReveal() {
   const items = document.querySelectorAll(".reveal");
   if (items.length === 0) return;
   if (!("IntersectionObserver" in window)) {
-    items.forEach((item) => item.classList.add("is-visible"));
+    revealAll();
     return;
   }
   const observer = new IntersectionObserver(
@@ -90,9 +94,21 @@ function initReveal() {
   items.forEach((item) => observer.observe(item));
 }
 
-initThemeToggle();
-initNavMenu();
-initReveal();
+// Each enhancement runs on its own, so one that throws can't stop the rest.
+// The head script has already added .js, so if the reveal fails, every
+// section is shown rather than left hidden for the fade-in.
+function run(init, fallback) {
+  try {
+    init();
+  } catch (error) {
+    console.error(error);
+    fallback?.();
+  }
+}
+
+run(initThemeToggle);
+run(initNavMenu);
+run(initReveal, revealAll);
 
 /**
  * Signup forms (spec §6.3). Messages come only from the form's data-msg-*
@@ -176,4 +192,4 @@ function wireSignupForms() {
   }
 }
 
-wireSignupForms();
+run(wireSignupForms);

@@ -25,8 +25,15 @@ function fakeStorage(saved, { throws = false } = {}) {
 }
 
 // Runs theme-init.js the way a browser would: in a fresh global with a fake
-// document, localStorage and matchMedia.
-function runThemeInit({ saved = null, prefersLight = false, storageThrows = false, storageBlocked = false } = {}) {
+// document, localStorage and matchMedia. noMatchMedia leaves matchMedia out,
+// as in browsers too old to have it.
+function runThemeInit({
+  saved = null,
+  prefersLight = false,
+  storageThrows = false,
+  storageBlocked = false,
+  noMatchMedia = false,
+} = {}) {
   const attributes = {};
   const classes = new Set();
   const storage = fakeStorage(saved, { throws: storageThrows });
@@ -39,8 +46,13 @@ function runThemeInit({ saved = null, prefersLight = false, storageThrows = fals
         },
       },
     },
-    matchMedia: (query) => ({ media: query, matches: query === "(prefers-color-scheme: light)" && prefersLight }),
   };
+  if (!noMatchMedia) {
+    context.matchMedia = (query) => ({
+      media: query,
+      matches: query === "(prefers-color-scheme: light)" && prefersLight,
+    });
+  }
   if (storageBlocked) {
     Object.defineProperty(context, "localStorage", {
       get() {
@@ -87,6 +99,13 @@ test("the head script never writes to storage", () => {
 test("storage that throws still gets a theme, without an error", () => {
   assert.equal(runThemeInit({ storageThrows: true, prefersLight: true }).theme, "light");
   assert.equal(runThemeInit({ storageBlocked: true, prefersLight: false }).theme, "dark");
+});
+
+test("without matchMedia the theme is dark, without an error", () => {
+  const { theme, classes } = runThemeInit({ noMatchMedia: true });
+  assert.equal(theme, "dark");
+  assert.ok(classes.has("js"));
+  assert.equal(runThemeInit({ noMatchMedia: true, saved: "light" }).theme, "light");
 });
 
 test("the js class is added", () => {
