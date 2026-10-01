@@ -134,6 +134,8 @@ for (const [label, request, error] of [
   ["a body that isn't JSON", () => postRaw("{not json"), "Invalid request body"],
   ["a JSON null body", () => postRaw("null"), "Invalid request body"],
   ["an array instead of an address", () => post({ email: [ADDRESS], source: "ascend-landing" }), "Invalid email address"],
+  // RFC 5321 caps an address at 254 characters; this one is 255.
+  ["an address longer than 254 characters", () => post({ email: "a@" + "b".repeat(249) + ".com", source: "ascend-landing" }), "Invalid email address"],
 ]) {
   test(`${label} gets 400 and never reaches the database`, async (t) => {
     const { status, body, calls, sent } = await subscribe(t, request());
@@ -143,6 +145,15 @@ for (const [label, request, error] of [
     assert.equal(sent.length, 0);
   });
 }
+
+test("a 254-character address is accepted and stored", async (t) => {
+  const email = "a@" + "b".repeat(248) + ".com";
+  assert.equal(email.length, 254);
+  const { status, body, calls } = await subscribe(t, post({ email, source: "ascend-landing" }));
+  assert.equal(status, 200);
+  assert.deepEqual(body, { success: true });
+  assert.deepEqual(calls, [{ sql: INSERT_SQL, a: [email, "ascend-landing"] }]);
+});
 
 // ── Missing environment ─────────────────────────────────────────────────
 for (const missing of ["RESEND_API_KEY", "DB"]) {

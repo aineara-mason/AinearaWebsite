@@ -194,6 +194,10 @@ export async function onRequestPost({ request, env }) {
 
   const normalizedEmail = email.trim().toLowerCase();
 
+  // RFC 5321 caps an address at 254 characters. Checking first also keeps
+  // the regex below off long inputs, where it backtracks quadratically.
+  if (normalizedEmail.length > 254) return json({ error: 'Invalid email address' }, 400, origin);
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
     return json({ error: 'Invalid email address' }, 400, origin);
   }
