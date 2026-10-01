@@ -197,6 +197,30 @@ test("only rules scoped to .js hide .reveal", () => {
   }
 });
 
+test("without JavaScript the phone header scrolls away instead of covering link targets", () => {
+  const css = readFileSync(path.join(SITE_DIR, "assets/css/site.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+  const blocks = [];
+  for (const match of css.matchAll(/@media\s*\(max-width:\s*767\.98px\)\s*\{/g)) {
+    let depth = 1;
+    let end = match.index + match[0].length;
+    while (depth > 0 && end < css.length) {
+      if (css[end] === "{") depth += 1;
+      else if (css[end] === "}") depth -= 1;
+      end += 1;
+    }
+    blocks.push(css.slice(match.index + match[0].length, end - 1));
+  }
+  assert.ok(blocks.length > 0, "site.css has no max-width: 767.98px media block");
+  const found = blocks.some((block) =>
+    [...block.matchAll(/([^{}]+)\{([^{}]*)\}/g)].some(
+      ([, selectors, body]) =>
+        selectors.split(",").some((selector) => selector.trim() === "html:not(.js) .site-header") &&
+        /(?:^|[\s;])position\s*:\s*static\s*(?:;|$)/.test(body),
+    ),
+  );
+  assert.ok(found, "the 767.98px block has no `html:not(.js) .site-header { position: static }` rule");
+});
+
 test("every relative module import in the site's scripts resolves", () => {
   const jsDir = path.join(SITE_DIR, "assets/js");
   for (const file of listFiles(jsDir).filter((name) => name.endsWith(".js"))) {

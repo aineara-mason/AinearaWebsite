@@ -342,6 +342,11 @@ html:not(.js) .nav-toggle {
 
 /* The menu collapses on phones only when JavaScript can open it again. */
 @media (max-width: 767.98px) {
+  /* Without JS the open, wrapped nav is too tall to stay pinned over in-page targets. */
+  html:not(.js) .site-header {
+    position: static;
+  }
+
   .js .nav-toggle {
     display: inline-grid;
   }
