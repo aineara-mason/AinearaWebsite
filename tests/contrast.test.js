@@ -213,6 +213,18 @@ describe("the built /assets/css/tokens.css", () => {
     assert.deepEqual(declarations(withoutJs[1]), declarations(withJs[1]));
     assert.ok(declarations(withJs[1]).includes("color-scheme: light"));
     assertDeclares(withJs[1], LIGHT_DECLARATIONS, ':root[data-theme="light"]');
+    // Nothing else may be overridden: a stray --ascend-* line would make
+    // Ascend sections change with the theme (spec §4.1).
+    const names = (list) => list.map((declaration) => declaration.slice(0, declaration.indexOf(":"))).sort();
+    assert.deepEqual(names(declarations(withJs[1])), names(LIGHT_DECLARATIONS));
+  });
+
+  test("widens the gutter at the tablet and desktop breakpoints", () => {
+    const flat = css.replace(/\s+/g, " ");
+    const missing = ["tablet", "desktop"]
+      .map((size) => `@media (min-width: ${tokens.breakpoint[size]}) { :root { --gutter: ${tokens.gutter[size]}; } }`)
+      .filter((block) => !flat.includes(block));
+    assert.deepEqual(missing, [], "tokens.css doesn't match tokens.breakpoint and tokens.gutter");
   });
 
   test("never uses system-ui", () => {
