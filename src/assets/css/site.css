@@ -201,7 +201,7 @@ a:hover {
   transition: opacity var(--duration-state) var(--ease-state), background-color var(--duration-state) var(--ease-state), color var(--duration-state) var(--ease-state);
 }
 
-.button:hover {
+.button:not(:disabled):hover {
   opacity: 0.88;
 }
 
@@ -485,6 +485,13 @@ html:not(.js) .nav-toggle {
 .scope-ascend .button--primary {
   background: var(--ascend-button-bg);
   color: var(--ascend-button-text);
+}
+
+/* Dimming #1A6CF6 into the navy takes white text below 4.5:1, so the
+   primary darkens to #1560DC instead (5.62:1). */
+.scope-ascend .button--primary:not(:disabled):hover {
+  opacity: 1;
+  background: var(--ascend-accent-on-light);
 }
 
 .scope-ascend .button--secondary {

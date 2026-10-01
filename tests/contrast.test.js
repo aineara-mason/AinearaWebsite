@@ -41,6 +41,10 @@ function buildPairs() {
     add(`ascend focus ring (text) on ${surface}`, a.text, bg, NON_TEXT);
   }
   add("ascend buttonText on buttonBg", a.buttonText, a.buttonBg, TEXT);
+  // On hover the primary button darkens to accentOnLight instead of dimming:
+  // opacity 0.88 blends #1A6CF6 into the navy and white text on it drops to
+  // about 4.24:1.
+  add("ascend buttonText on hover (accentOnLight)", a.buttonText, a.accentOnLight, TEXT);
   for (const surface of ["page", "section", "fill"]) {
     add(`ascend accent on studio.dark ${surface}`, a.accent, tokens.studio.dark[surface], TEXT);
     add(`ascend accentOnLight on studio.light ${surface}`, a.accentOnLight, tokens.studio.light[surface], TEXT);
@@ -173,7 +177,7 @@ test("rgba colours are composited over the surface they sit on", () => {
 
 describe("every colour pair meets its WCAG 2.1 threshold", () => {
   test("the pair list is complete", () => {
-    assert.equal(PAIRS.length, 79);
+    assert.equal(PAIRS.length, 80);
   });
   for (const { name, fg, bg, min } of PAIRS) {
     test(`${name} (at least ${min}:1)`, () => {
@@ -229,5 +233,48 @@ describe("the built /assets/css/tokens.css", () => {
 
   test("never uses system-ui", () => {
     assert.doesNotMatch(css, /system-ui/);
+  });
+});
+
+describe("button hover in the built /assets/css/site.css", () => {
+  const file = path.join(SITE_DIR, "assets/css/site.css");
+  const css = existsSync(file) ? readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "") : "";
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([, selectors, body]) => ({
+    selectors: selectors.split(",").map((selector) => selector.trim().replace(/\s+/g, " ")),
+    body: declarations(body),
+  }));
+
+  test("exists", () => {
+    assert.ok(css, `${file} is missing; run npm run build`);
+  });
+
+  // A disabled button, such as the "Sending…" state, must not dim on hover.
+  test("only enabled buttons change opacity on hover", () => {
+    const offenders = [];
+    for (const { selectors, body } of rules) {
+      if (!body.some((declaration) => declaration.startsWith("opacity:"))) continue;
+      for (const selector of selectors) {
+        const compounds = selector.split(/\s*[\s>+~]\s*/);
+        const dims = compounds.some(
+          (compound) =>
+            /\.button(?:--[a-z-]+)?(?![\w-])/.test(compound) &&
+            compound.includes(":hover") &&
+            !compound.includes(":not(:disabled)"),
+        );
+        if (dims) offenders.push(selector);
+      }
+    }
+    assert.deepEqual(offenders, [], "a .button:hover rule sets opacity without :not(:disabled)");
+  });
+
+  // White on #1A6CF6 is only 4.65:1, so dimming the button into the navy
+  // takes it below 4.5:1. Ascend's primary darkens to accentOnLight instead.
+  test("the Ascend primary button darkens to accentOnLight on hover instead of dimming", () => {
+    const selector = ".scope-ascend .button--primary:not(:disabled):hover";
+    const body = rules.filter((rule) => rule.selectors.includes(selector)).flatMap((rule) => rule.body);
+    assert.ok(body.length > 0, `site.css has no ${selector} rule`);
+    const last = (name) => body.filter((declaration) => declaration.startsWith(`${name}:`)).at(-1);
+    assert.equal(last("opacity"), "opacity: 1");
+    assert.equal(last("background"), "background: var(--ascend-accent-on-light)");
   });
 });
