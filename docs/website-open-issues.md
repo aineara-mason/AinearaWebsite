@@ -1,9 +1,9 @@
 # Website open issues
 
 Known places where the live site contradicts itself, the privacy policy, or the Ascend app.
-The privacy policy (`public/privacy.html`) and support page (`public/support.html`) were checked
-line by line against the Ascend code on 2026-09-30; everything below is what that check left open.
-Remove an entry when it's resolved.
+The privacy policy (`src/privacy.njk`) and support page (`src/support.njk`) were checked
+line by line against the Ascend code on 2026-09-30; everything below is what that check and the
+redesign left open. Remove an entry when it's resolved.
 
 ## Policy and support page describe Ascend after pending app changes
 
@@ -27,30 +27,37 @@ accurate when those changes ship.
 - **Account emails via Resend** (privacy §2.1 and §5). Assumes Supabase Auth's custom SMTP is set
   to Resend.
 
-## Site copy that contradicts the privacy policy
+## Left open by the redesign
 
-- **Waitlist emails.** The policy says one confirmation and one launch email, nothing else.
-  `public/index.html` promises "exclusive launch pricing, and an inside look at what we're
-  building"; `public/ascend.html` promises "an inside look at what we're building before anyone
-  else sees it". Remove those promises, or change the policy and add an unsubscribe route.
-- **"What's yours stays yours" / "at home on your device"** (`public/index.html`). Ascend stores
-  data on our servers and, with consent, sends some to Anthropic. Reword.
-- **The confirmation email** (`functions/api/subscribe.js`) always talks about Sillage, even for
-  Ascend signups, and has no unsubscribe link.
-
-## Site copy that contradicts the Ascend app
-
-- **`public/ascend.html`** still makes claims the app has walked back: HRV and resting heart rate
-  feeding readiness, sleep stages, coach/client features as described, and "exclusive launch
-  pricing". The app follows the FDA General Wellness framing; the page should too.
-- **Launch order.** `public/sillage.html` and `public/ascend.html` call Sillage the first app and
-  Ascend the second. Ascend launches first.
-- **UnderRated** is listed on the homepage but has no product behind it.
+- **Cross-list signups.** `subscribers.email` is unique across every list (`schema.sql`), so the
+  first form wins. Someone on the Sillage list who later uses an Ascend form is told "We'll email
+  you when Ascend launches", but their row keeps `sillage-landing` and no Ascend confirmation is
+  sent; the same happens the other way round. Either send each launch email to everyone on the
+  list, or dedupe on (email, source), which needs a schema migration.
+- **Launch emails.** They're sent outside this repo, and each needs what the confirmation emails
+  now have: the removal line ("To be removed, reply to this email or write to
+  privacy@aineara.com.") and `reply_to` set to privacy@aineara.com. The privacy policy promises
+  both.
+- **Training Load screenshot.** `05-training-load.png` isn't published: its "How to read this"
+  card says staying in range "minimises injury risk", wording Ascend has since removed. Re-shoot
+  it on current Ascend main (or crop the card off), copy it into `src/_images/ascend/`, and add it
+  to `src/_data/ascendScreens.js` after `04-nutrition` in the rail, with the alt text
+  `ascend.alt.05-training-load`. `01-today.png` also predates the app's current wording; if it's
+  re-shot, rewrite `ascend.alt.01-today` as well, because its figures will change.
+- **Ascend App Store listing draft** (`/Users/masonstassi/Desktop/Ascend/docs/app_store_listing_2026-09-08.md`).
+  Its description still opens with "a calorie target that corrects itself", and its promotional
+  text says the targets "correct themselves from what you actually log". Adaptive targets are Pro
+  only, need 14 logged days, are suggestions the user applies, and aren't given under 18. The site
+  now says "Training and nutrition in one app, with calorie targets that can adapt to your
+  progress."; change the listing to match before submission.
+- **Plan Store pricing.** The pricing line on /ascend mentions only the subscriptions. If one-off
+  plans are on sale in Ascend's Plan Store at launch, the line is true but incomplete; consider
+  "Free to start. Optional Plus, Pro and Elite subscriptions, and plans you can buy once."
 
 ## Other
 
-- `public/terms.html` is titled "Terms" (the app says "Terms of Use"), names no product, and
-  mentions "third-party payment providers" (Apple handles all billing). Needs a proper rewrite.
-- Light-theme links and muted text fall below WCAG AA contrast site-wide. Fix in the redesign.
+- `src/terms.njk` (its text moved unchanged from `public/terms.html`) is titled "Terms of Service"
+  (the app says "Terms of Use"), names no product, and mentions "third-party payment providers"
+  (Apple handles all billing). Needs a proper rewrite.
 - `/README.md`, `/schema.sql` and `/.assetsignore` may still be served from a stale Cloudflare
   cache until about 2026-10-06; they are no longer in the deployed site.
