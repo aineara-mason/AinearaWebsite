@@ -224,10 +224,14 @@ test("_site has no junk files", () => {
 // ── Task 5: signup forms ──────────────────────────────────────────────
 // No page includes the partial until Task 6, so this passes with 0 forms
 // for now; the diagnostic line shows how many forms were really checked.
+// site.js skips a form that lacks the email input, submit button or
+// .signup-status (it then falls back to a native POST to the page URL), and
+// shows an empty message for a missing data-msg-* attribute.
 test("signup forms post one known source and have a no-JavaScript note", (t) => {
   let checked = 0;
   for (const rel of templated) {
-    for (const form of html(rel).querySelectorAll("form.signup-form")) {
+    const page = html(rel);
+    for (const form of page.querySelectorAll("form.signup-form")) {
       checked += 1;
       const source = form.getAttribute("data-source");
       const where = `${rel} form[data-source="${source}"]`;
@@ -235,10 +239,25 @@ test("signup forms post one known source and have a no-JavaScript note", (t) => 
       assert.equal(form.hasAttribute("action"), false, `${where}: must not have an action`);
       assert.ok(SOURCES.includes(source), `${where}: unknown source`);
       assert.equal(form.getAttribute("data-app"), appForSource(source), `${where}: data-app`);
+      for (const name of ["data-msg-success", "data-msg-invalid", "data-msg-error", "data-msg-sending"]) {
+        assert.ok(form.getAttribute(name)?.trim(), `${where}: ${name} is missing or empty`);
+      }
+      assert.ok(form.querySelector('button[type="submit"]'), `${where}: no button[type="submit"]`);
       const inputs = form.querySelectorAll('input[type="email"]');
       assert.equal(inputs.length, 1, `${where}: needs exactly one email input`);
       const id = inputs[0].getAttribute("id");
-      assert.ok(id && form.querySelector(`label[for="${id}"]`), `${where}: no label[for="${id}"]`);
+      assert.match(id ?? "", /^signup-email-[a-z0-9-]+$/, `${where}: email input id`);
+      assert.equal(page.querySelectorAll(`[id="${id}"]`).length, 1, `${where}: id "${id}" is not unique on the page`);
+      assert.ok(form.querySelector(`label[for="${id}"]`), `${where}: no label[for="${id}"]`);
+      const status = form.querySelector(".signup-status");
+      assert.ok(status, `${where}: no .signup-status`);
+      assert.equal(status.getAttribute("role"), "status", `${where}: .signup-status role`);
+      assert.equal(status.getAttribute("aria-live"), "polite", `${where}: .signup-status aria-live`);
+      assert.equal(status.getAttribute("id"), id.replace(/^signup-email-/, "signup-status-"), `${where}: .signup-status id`);
+      const describedBy = (inputs[0].getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
+      for (const ref of describedBy) {
+        assert.ok(page.getElementById(ref), `${where}: aria-describedby "${ref}" isn't on the page`);
+      }
       const noscript = form.parentNode.childNodes.find((node) => node.rawTagName?.toLowerCase() === "noscript");
       assert.ok(noscript, `${where}: no sibling <noscript>`);
       assert.ok(
