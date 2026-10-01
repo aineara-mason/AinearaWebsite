@@ -5,7 +5,7 @@ import { join, posix } from "node:path";
 import copy from "../../src/_data/copy.js";
 import ascendScreens from "../../src/_data/ascendScreens.js";
 import tokens from "../../src/_data/tokens.js";
-import { ROOT, SITE_DIR, readHtml, isTemplated, norm, pageStrings } from "../helpers/site.js";
+import { ROOT, SITE_DIR, listFiles, readHtml, isTemplated, norm, pageStrings } from "../helpers/site.js";
 
 // Shared Definitions §13: phrases banned on ascend.html only.
 const BANNED_ON_ASCEND = ["hrv", "resting heart rate", "sleep stage", "injur", "coach", "05-training-load"];
@@ -137,6 +137,17 @@ test("every image is WebP (src and every srcset candidate)", () => {
   }
 });
 
+// Every screenshot renders at min(70vw, 320px) (ascend.css: the rail item and
+// .feature .screenshot), and 70vw reaches 320px at about 458px wide.
+test("every screenshot's sizes matches its rendered width, min(70vw, 320px)", () => {
+  const root = ascendPage();
+  const imgs = root.querySelectorAll(".screenshot img");
+  assert.ok(imgs.length > 0, "no .screenshot img");
+  imgs.forEach((img, i) => {
+    assert.equal(img.getAttribute("sizes"), "(min-width: 458px) 320px, 70vw", `screenshot ${i + 1} sizes`);
+  });
+});
+
 test("ascendScreens points at copied originals with alt text, and leaves 05 out (D6)", () => {
   const { items, rail, features, mark } = ascendScreens;
   assert.ok(existsSync(join(ROOT, mark)), `${mark} is missing`);
@@ -147,6 +158,19 @@ test("ascendScreens points at copied originals with alt text, and leaves 05 out 
   for (const id of [...rail, ...Object.values(features)]) assert.ok(items[id], `unknown screen ${id}`);
   assert.equal("05-training-load" in items, false);
   assert.equal(existsSync(join(ROOT, "src/_images/ascend/05-training-load.png")), false);
+  // D14: the originals are never published; only the resized WebP files are.
+  assert.equal(existsSync(join(SITE_DIR, "_images")), false, "_site/_images exists: the originals were published");
+  assert.deepEqual(
+    listFiles(SITE_DIR).filter((rel) => rel.toLowerCase().endsWith(".png")),
+    [
+      "assets/img/apple-touch-icon.png",
+      "assets/img/favicon-32.png",
+      "assets/img/og/ascend.png",
+      "assets/img/og/home.png",
+      "assets/img/og/sillage.png",
+    ],
+    "_site has PNGs other than the favicons and link previews",
+  );
 });
 
 // "1.4s" or "1400ms" in seconds.
