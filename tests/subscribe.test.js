@@ -56,12 +56,16 @@ function postRaw(body) {
 
 const post = (value) => postRaw(JSON.stringify(value));
 
-// D1 records every bind. Resend (global fetch) records every request and
-// answers with resend(). console.error is muted. t.mock undoes all of it
-// after each test.
-function setup(t, { changes = 1, resend = () => new Response('{"id":"test"}', { status: 200 }), env = {} } = {}) {
+// D1 records every bind; with runThrows, run() rejects. Resend (global
+// fetch) records every request and answers with resend(). console.error is
+// muted. t.mock undoes all of it after each test.
+function setup(t, { changes = 1, runThrows = false, resend = () => new Response('{"id":"test"}', { status: 200 }), env = {} } = {}) {
   const calls = [];
-  const DB = { prepare(sql) { return { bind(...a) { calls.push({ sql, a }); return { run: async () => ({ meta: { changes } }) }; } }; } };
+  const run = async () => {
+    if (runThrows) throw new Error("D1_ERROR: test failure");
+    return { meta: { changes } };
+  };
+  const DB = { prepare(sql) { return { bind(...a) { calls.push({ sql, a }); return { run }; } }; } };
   const sent = [];
   t.mock.method(globalThis, "fetch", async (url, init) => {
     sent.push({ url: String(url), init, payload: JSON.parse(init.body) });
@@ -168,6 +172,18 @@ for (const missing of ["RESEND_API_KEY", "DB"]) {
   });
 }
 
+// ── D1 failure ──────────────────────────────────────────────────────────
+// The server-failure state the signup forms show (spec §6.3).
+test("a D1 error gets 500 and sends no email", async (t) => {
+  const { status, body, calls, sent } = await subscribe(t, post({ email: ADDRESS, source: "ascend-landing" }), {
+    runThrows: true,
+  });
+  assert.equal(status, 500);
+  assert.deepEqual(body, { error: "Something went wrong. Please try again." });
+  assert.deepEqual(calls, [{ sql: INSERT_SQL, a: [ADDRESS, "ascend-landing"] }]);
+  assert.equal(sent.length, 0);
+});
+
 // ── Resend failures never fail the signup ───────────────────────────────
 for (const [label, resend] of [
   ["Resend answers 500", () => new Response('{"message":"test failure"}', { status: 500 })],
@@ -200,10 +216,13 @@ for (const [source, copy, app] of [
     assert.match(html, /background:#FFFFFF/i, "the email is on white");
     assert.doesNotMatch(html, /#444(?![0-9a-f])/i);
     assert.doesNotMatch(html, /#080808/i);
-    // Text colours only: the lookbehind skips background-color.
-    const colours = [...html.matchAll(/(?<![-\w])color:\s*(#[0-9a-f]{6})/gi)].map((m) => m[1]);
+    // Every text colour value, whatever its form: the lookbehind skips
+    // background-color. Each must be #RGB or #RRGGBB, so a 3-digit grey
+    // like #999 (2.85:1) is checked too.
+    const colours = [...html.matchAll(/(?<![-\w])color:\s*([^;"']+)/gi)].map((m) => m[1].trim());
     assert.ok(colours.length > 0, "the HTML sets its text colours");
     for (const colour of colours) {
+      assert.match(colour, /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i, `text colour ${colour} must be #RGB or #RRGGBB`);
       const ratio = contrastRatio(colour, "#FFFFFF");
       assert.ok(ratio >= 4.5, `${colour} on #FFFFFF is ${ratio.toFixed(2)}:1; text needs 4.5:1`);
     }
