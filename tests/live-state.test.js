@@ -2,6 +2,7 @@
 // test-only override in src/_data/site.js, and checks the pages that change.
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { ROOT, readHtml, isTemplated, norm, pageStrings } from "./helpers/site.js";
 import { buildSite } from "./helpers/build.js";
@@ -9,6 +10,12 @@ import copy from "../src/_data/copy.js";
 
 const TEST_APP_STORE_URL = "https://apps.apple.com/app/id0000000000";
 const LIVE_DIR = path.join(ROOT, "_site-live");
+const STALE_MARKER = path.join(LIVE_DIR, "stale-marker.txt");
+
+// A file left over from an earlier build, which the build must clear so no
+// page or image that is no longer generated can satisfy a check below.
+mkdirSync(LIVE_DIR, { recursive: true });
+writeFileSync(STALE_MARKER, "left over from an earlier build\n");
 
 // The build finishes before any describe() below reads a page.
 await buildSite({ outDir: LIVE_DIR, env: { AINEARA_TEST_ASCEND_LIVE_URL: TEST_APP_STORE_URL } });
@@ -20,6 +27,10 @@ function one(scope, selector) {
   assert.ok(el, `missing ${selector}`);
   return el;
 }
+
+test("the live build starts from an empty _site-live", () => {
+  assert.ok(!existsSync(STALE_MARKER), "_site-live/stale-marker.txt survived the build");
+});
 
 describe("ascend.html with Ascend live", () => {
   const root = readHtml("ascend.html", LIVE_DIR);
@@ -93,6 +104,13 @@ describe("index.html with Ascend live", () => {
       one(root, 'meta[name="description"]').getAttribute("content"),
       copy["meta.home.description.live"],
     );
+  });
+
+  test("drops the waitlist hero line, heading, card label and signup note", () => {
+    const strings = pageStrings(root);
+    for (const key of ["home.hero.line", "home.waitlist.heading", "home.cards.ascend.label", "signup.note.ascend"]) {
+      assert.ok(!strings.includes(copy[key]), `${key} still shows after launch`);
+    }
   });
 });
 
