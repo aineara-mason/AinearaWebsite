@@ -1,0 +1,9 @@
+{%- set here = page.url | cleanUrl -%}
+<header class="site-header"><nav class="nav container" aria-label="{{ copy['a11y.nav.main'] }}">
+  <a class="wordmark" href="/"{% if here == "/" %} aria-current="page"{% endif %}>{{ site.name }}</a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">{% icon "menu" %}{% icon "x" %}<span class="visually-hidden">{{ copy["a11y.menu"] }}</span></button>
+  <div class="nav-menu" id="nav-menu">
+    <ul class="nav-links" role="list"><li><a href="/#apps">{{ copy["nav.apps"] }}</a></li><li><a href="/#about">{{ copy["nav.about"] }}</a></li></ul>
+    <button class="theme-toggle" type="button" hidden aria-label="{{ copy['a11y.theme.toLight'] }}" data-label-to-light="{{ copy['a11y.theme.toLight'] }}" data-label-to-dark="{{ copy['a11y.theme.toDark'] }}">{% icon "sun" %}{% icon "moon" %}</button>
+    <a class="button button--primary nav-cta" href="{{ '#get-ascend' if page.url == '/ascend.html' else '/ascend' }}">{{ copy["nav.cta"] }}</a>
+  </div></nav></header>

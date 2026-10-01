@@ -153,8 +153,8 @@ gold text 6.91–7.33 (dark), 5.08 (light); Sillage buttons 7.33 / 5.35; error 6
 
 - State changes 150–250ms ease. Sections fade up once on entry (0.5s, the current spring curve
   `cubic-bezier(0.16,1,0.3,1)`).
-- The Ascend page hero mark pulses on a 1.4s loop (scale 1 → 1.06, opacity .85 → 1), as the app's
-  startup screen does.
+- The Ascend page hero mark pulses three times on the 1.4s cycle (scale 1 → 1.06, opacity .85 → 1),
+  as the app's startup screen does, about 4.2s in all, so it stops within five seconds (WCAG 2.2.2).
 - `prefers-reduced-motion: reduce` turns off all motion, including the pulse.
 
 ### 4.5 Removed from today's site

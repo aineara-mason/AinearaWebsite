@@ -1,0 +1,141 @@
+/* ─────────────────────────────────────────
+   Legal layout: privacy, terms and support (spec §5.4)
+   A 760px reading column in the studio frame. No .reveal here:
+   these pages must be readable even if JavaScript fails.
+   The column itself is site.css's .container--reading, the label and
+   title add site.css's .label and .heading, and links use the global
+   link style.
+   ───────────────────────────────────────── */
+
+.legal {
+  overflow-wrap: break-word;
+}
+
+/* ─── Hero ─── */
+.legal-hero {
+  padding-block: var(--space-8) var(--space-7);
+}
+
+.legal-label {
+  margin: 0 0 var(--space-4);
+}
+
+.legal-title {
+  margin: 0 0 var(--space-5);
+}
+
+.legal-subtitle {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+.legal-date {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Body ─── */
+.legal-body {
+  padding-bottom: var(--space-9);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.legal-section {
+  padding-block: var(--space-7);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.legal-section h2 {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-card-title);
+  line-height: 1.3;
+}
+
+.legal-section h3 {
+  margin: var(--space-6) 0 var(--space-2);
+  font-size: var(--text-body);
+  font-weight: var(--weight-card-title);
+  line-height: 1.4;
+}
+
+.legal-section p {
+  margin: 0 0 var(--space-4);
+}
+
+.legal-section > :last-child {
+  margin-bottom: 0;
+}
+
+/* Bold run-in text and the row header of each table row. */
+.legal strong,
+.legal-table tbody th {
+  font-weight: 600;
+}
+
+/* ─── Lists ─── */
+.legal-list {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-5);
+}
+
+.legal-list li {
+  margin-bottom: var(--space-2);
+  padding-left: var(--space-1);
+}
+
+.legal-list li::marker {
+  color: var(--color-text-secondary);
+}
+
+/* ─── Tables ───
+   Tables keep their columns and scroll sideways inside the wrap on phones,
+   so the page itself never scrolls horizontally. Each wrap is a named
+   region with tabindex="0", so the keyboard can scroll it too. */
+.legal-table-wrap {
+  margin: 0 0 var(--space-5);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.legal-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+.legal-table th,
+.legal-table td {
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.legal-table tbody tr:last-child > * {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.legal-table thead th {
+  font-size: var(--text-label);
+  font-weight: var(--weight-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ─── Address block ─── */
+.legal-address {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+}
+
+@media (min-width: 768px) {
+  .legal-hero {
+    padding-block: var(--space-9) var(--space-8);
+  }
+}

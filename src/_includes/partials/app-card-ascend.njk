@@ -1,0 +1,12 @@
+{#- Homepage Ascend card: navy in both themes. ascend-mark.njk reads markSizes, markLoading and markClass. -#}
+<article class="app-card app-card--ascend scope-ascend">
+  {% set markSizes = "64px" %}
+  {% set markLoading = "lazy" %}
+  {% set markClass = "app-mark" %}
+  {% include "partials/ascend-mark.njk" %}
+  <h3 class="app-card-title">{{ copy["home.cards.ascend.name"] }}</h3>
+  <p class="app-card-label">{{ copy["home.cards.ascend.label.live"] if site.apps.ascend.live else copy["home.cards.ascend.label"] }}</p>
+  <p class="heading">{{ copy["home.cards.ascend.tagline"] }}</p>
+  <p class="app-card-line">{{ copy["home.cards.ascend.line"] }}</p>
+  <a class="app-card-link" href="/ascend">{{ copy["home.cards.ascend.link"] }}{% icon "arrow-right" %}</a>
+</article>

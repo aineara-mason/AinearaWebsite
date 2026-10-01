@@ -11,11 +11,15 @@
     "clean": "rm -rf _site _site-live",
     "pretest": "npm run clean && npm run build -- --quiet",
     "test": "node --test \"tests/**/*.test.js\"",
-    "check-live": "node scripts/check-live.js"
+    "check-live": "node scripts/check-live.js",
+    "images": "node scripts/make-static-images.js"
   },
   "devDependencies": {
     "@11ty/eleventy": "3.1.6",
     "@11ty/eleventy-img": "7.0.0",
-    "node-html-parser": "9.0.4"
+    "@fontsource-variable/inter": "5.3.0",
+    "lucide-static": "1.49.0",
+    "node-html-parser": "9.0.4",
+    "sharp": "0.35.5"
   }
 }

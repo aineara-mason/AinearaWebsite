@@ -1,0 +1,11 @@
+{%- set here = page.url | cleanUrl -%}
+<footer class="site-footer"><div class="container">
+  <a class="wordmark" href="/"{% if here == "/" %} aria-current="page"{% endif %}>{{ site.name }}</a>
+  <p class="footer-copy">{{ copy["footer.copy"] }}</p>
+  <nav class="footer-links" aria-label="{{ copy['a11y.nav.footer'] }}"><ul role="list">
+    {%- for link in [["/privacy", "footer.privacy"], ["/terms", "footer.terms"], ["/support", "footer.support"]] -%}
+    <li><a href="{{ link[0] }}"{% if here == link[0] %} aria-current="page"{% endif %}>{{ copy[link[1]] }}</a></li>
+    {%- endfor -%}
+  </ul></nav>
+  <a class="footer-email" href="mailto:{{ site.emails.hello }}">{{ site.emails.hello }}</a>
+</div></footer>
