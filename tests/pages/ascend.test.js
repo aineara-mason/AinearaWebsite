@@ -4,6 +4,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, posix } from "node:path";
 import copy from "../../src/_data/copy.js";
 import ascendScreens from "../../src/_data/ascendScreens.js";
+import tokens from "../../src/_data/tokens.js";
 import { ROOT, SITE_DIR, readHtml, isTemplated, norm, pageStrings } from "../helpers/site.js";
 
 // Shared Definitions §13: phrases banned on ascend.html only.
@@ -148,10 +149,29 @@ test("ascendScreens points at copied originals with alt text, and leaves 05 out 
   assert.equal(existsSync(join(ROOT, "src/_images/ascend/05-training-load.png")), false);
 });
 
-test("ascend.css: pulse keyframes, the pinned animation and a reduced-motion override", () => {
+// "1.4s" or "1400ms" in seconds.
+function seconds(time) {
+  const match = /^(\d*\.?\d+)(ms|s)$/.exec(time);
+  assert.ok(match, `can't read the time ${time}`);
+  return Number(match[1]) / (match[2] === "ms" ? 1000 : 1);
+}
+
+test("ascend.css: pulse keyframes, a pulse that stops within five seconds and a reduced-motion override", () => {
   const css = readFileSync(join(SITE_DIR, "assets/css/ascend.css"), "utf8");
   assert.match(css, /@keyframes ascend-pulse\s*\{/);
-  assert.match(css, /\.ascend-mark\s*\{[^}]*animation:\s*ascend-pulse var\(--duration-pulse\) ease-in-out infinite alternate;/);
+  const animation = /\.ascend-mark\s*\{[^}]*animation:\s*([^;]+);/.exec(css)?.[1];
+  assert.ok(animation, ".ascend-mark has no animation");
+  const parts = animation.trim().split(/\s+/);
+  assert.deepEqual(parts.slice(0, 2), ["ascend-pulse", "var(--duration-pulse)"]);
+  // WCAG 2.2.2 Pause, Stop, Hide: motion that starts on its own must stop within 5 seconds.
+  assert.equal(parts.includes("infinite"), false, `the pulse never stops: ${animation}`);
+  const counts = parts.filter((part) => /^\d+$/.test(part)).map(Number);
+  assert.equal(counts.length, 1, `the pulse needs one whole-number iteration count: ${animation}`);
+  assert.ok(counts[0] > 0, `the pulse runs ${counts[0]} times`);
+  const total = counts[0] * seconds(tokens.motion.durationPulse);
+  assert.ok(total <= 5, `the pulse runs for ${total}s, over 5s`);
+  assert.ok(parts.includes("alternate"), `the pulse should alternate: ${animation}`);
+  assert.ok(parts.includes("forwards"), `the pulse should hold its last frame: ${animation}`);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*\.ascend-mark\s*\{\s*animation:\s*none;\s*\}/);
 });
 

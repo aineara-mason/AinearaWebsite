@@ -3,7 +3,9 @@
    lays the page out. Ascend sections use theme-independent tokens, so they
    look the same in the dark and light themes, as in the app. */
 
-/* Mark pulse, as on the app's startup screen (spec §4.4). */
+/* Mark pulse, as on the app's startup screen (spec §4.4). It runs three
+   1.4s cycles (4.2s) and holds the last frame, so it stops within the five
+   seconds WCAG 2.2.2 Pause, Stop, Hide allows for motion that starts on its own. */
 @keyframes ascend-pulse {
   from {
     transform: scale(1);
@@ -30,7 +32,7 @@
   display: block;
   width: 96px;
   height: 96px;
-  animation: ascend-pulse var(--duration-pulse) ease-in-out infinite alternate;
+  animation: ascend-pulse var(--duration-pulse) ease-in-out 3 alternate forwards;
 }
 .scope-ascend .label {
   color: var(--ascend-text-secondary);
