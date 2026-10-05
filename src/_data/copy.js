@@ -115,7 +115,7 @@ export default {
   "ascend.stay.label": "Stay with it",
   "ascend.stay.heading": "Keep showing up.",
   "ascend.stay.1": "Track daily habits and keep your workout streak going.",
-  "ascend.stay.2": "Share workouts with followers, give kudos and join challenges. Sharing with followers is off until you turn it on for a workout.",
+  "ascend.stay.2": "Share workouts with followers, give kudos and set yourself challenges. Sharing with followers is off until you turn it on for a workout.",
   "ascend.stay.3": "A weekly report on your workouts, sleep, protein and weight, with a short AI summary if you allow it.",
   "ascend.stay.4": "Connect Apple Health to see your steps and sleep in Ascend.",
 

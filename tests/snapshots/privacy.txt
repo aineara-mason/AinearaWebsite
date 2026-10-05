@@ -27,13 +27,12 @@ We also record, linked to your account, when you start, resume and finish onboar
 Ascend stores what you record so it's available across sessions and devices: workouts (date, duration, exercises, sets, reps, weight, set type such as warm-up or drop set, and effort if you rate it), personal records and templates; meals and the foods in them, custom foods, recipes, and your calorie and macro (protein, carb and fat) targets; daily and weekly check-ins (mood, energy, hunger, soreness, stress and notes; the weekly check-in also records your weight and hours of sleep); habits; hydration; and your training plans. When you log a meal by voice, photo or label scan, the food is also saved as one of your custom foods.
 When you search for a food, the words you type (including partial words as you type) and any barcodes you scan are stored with your account. We use this history to keep search fast and to find gaps in our food catalog.
 ### 2.4 Apple Health
-If you connect Apple Health, Ascend asks to read six types of data: steps, resting heart rate, active energy, sleep, heart rate variability and respiratory rate. Ascend never writes anything to Apple Health.
+If you connect Apple Health, Ascend asks to read five types of data: steps, resting heart rate, sleep, heart rate variability and respiratory rate. Ascend never writes anything to Apple Health.
 While Ascend is open on your screen, it reads the last seven days from Apple Health and uploads one daily total or average per type to our database. This happens when the app opens or you go to the Today tab, when you come back to the app, and when the date changes, at most about once every 90 seconds. Individual readings, their exact times and which device recorded them are not uploaded. Ascend doesn't read Apple Health in the background.
 How it's used:
-Sleep feeds your readiness score (shown in the app and in widgets, and used to decide whether Ascend suggests a recovery day), your health timeline and your weekly report. If you allow AI features, your average sleep is also sent to Anthropic (section 2.6).
+Sleep feeds your readiness score (shown in the app and in widgets, and used to decide whether Ascend suggests a recovery day), bedtime suggestions, your health timeline, your weekly report and your own challenges. If you allow AI features, your average sleep is also sent to Anthropic (section 2.6).
 Steps appear in your progress, in walking suggestions and in your own challenges.
 Resting heart rate, heart rate variability and respiratory rate are shown to you.
-Active energy is requested but not currently used.
 Apple Health data is never used for advertising or data mining, never sold, and never stored in iCloud by Ascend. Your readiness score and a cached weekly summary are kept on your iPhone, so they may be included in your iPhone's own backups.
 You can change what Ascend reads at any time in the Health app. Turning access off stops new data from syncing, but doesn't delete what has already been uploaded. That stays until you delete your account, or until you ask us to delete it at privacy@aineara.com <mailto:privacy@aineara.com>.
 ### 2.5 Camera, microphone and photos
@@ -61,11 +60,10 @@ Whether your account is private | Any signed-in Ascend user.
 Your display name | Your followers, next to workouts you share.
 Workouts you share | Your followers see when the workout started, how long it lasted, any notes and the kudos count. Sharing is off by default and chosen per workout.
 All your workouts, shared or not | Your accountability partners see when each workout started, how long it lasted and whether you shared it. They can't see your exercises, sets or weights; in the app, they see your workout streak.
-All your workouts and your plans | A coach you accept: the date, duration and any notes of every workout, including ones you haven't shared, and your training plans (including the goal they're built around). A coach never sees your sets, check-ins, meals or Apple Health data, and you see nothing of your coach's own data. Ending coaching, or blocking the coach, stops their access immediately.
 Sets, reps, weights and personal records | Only you.
 Challenges | Anyone signed in to Ascend can see how many people have joined an open challenge. Other participants can also see an account identifier for each participant and when they joined. Nobody else sees your progress.
 Your profile, check-ins, meals, targets, habits, hydration, recipes, custom foods and Apple Health data | Only you.
-A private account (Settings › Privacy › Handle & Privacy) means new followers need your approval; people who already follow you keep following. If you report a post, we see the report, the post and the people involved so we can review it. Blocking someone hides you from each other in search and feeds and ends any accountability partnership or coaching relationship between you.
+A private account (Settings › Privacy › Handle & Privacy) means new followers need your approval; people who already follow you keep following. If you report a post, we see the report, the post and the people involved so we can review it. Blocking someone hides you from each other in search and feeds and ends any accountability partnership between you.
 ### 2.9 Purchases
 Subscriptions are sold and billed by Apple; we never see your payment details. When you buy, Ascend gives Apple an identifier for your Ascend account (not your name or email address) so the purchase is linked to it. We store your plan, the product you bought, Apple's transaction ID and when your subscription renews or expires.
 ### 2.10 Notifications

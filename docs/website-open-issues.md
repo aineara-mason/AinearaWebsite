@@ -10,12 +10,16 @@ redesign left open. Remove an entry when it's resolved.
 These pages went live on 2026-09-30, ahead of the Ascend changes they describe. They become
 accurate when those changes ship.
 
-- **Coaching** (privacy §2.8, support "Sharing and safety"). Written for the coach-access change
-  planned in the Ascend repo: `docs/superpowers/plans/2026-09-30-coach-access-one-way.md`.
-  That plan's Task 9 makes the remaining wording fixes, including adding the coach directory
-  listing row and replacing "you see nothing of your coach's own data" (clients can see coach
-  templates their own plans use).
-- **Settings › Coaching invite inbox** (support page). Doesn't exist until that plan's Task 8 ships.
+- **Apple Health "five types"** (privacy §2.4). True once the Ascend build that stops requesting
+  active energy ships (`Ascend/Services/HealthKitService.swift`, `readTypes`); earlier builds
+  still ask for it, and never use it.
+- **Apple Health data, "Only you"** (privacy §2.8, now that the coach row is gone). True once the
+  Ascend migration `supabase/migrations/20261005000010_coaching_is_one_way.sql` is applied: it
+  drops `coach_snapshot_select`, which until then (`20260806000009_coaching_is_directionless.sql`)
+  lets either person in an accepted coaching relationship read the other's Apple Health
+  snapshots. Production had no coaching relationships on 2026-10-05, so nobody is exposed today.
+  A push to `main` deploys at once, so merge these pages after `supabase db push` has applied it,
+  and ideally with the Ascend build that stops requesting active energy.
 - **Photo Meal Estimate** (privacy §2.5 and §2.6 say "a resized copy" is sent). True once the
   Ascend photo-upload fix ships; until then an unreadable photo is sent as the original file.
 
@@ -44,18 +48,16 @@ accurate when those changes ship.
   to `src/_data/ascendScreens.js` after `04-nutrition` in the rail, with the alt text
   `ascend.alt.05-training-load`. `01-today.png` also predates the app's current wording; if it's
   re-shot, rewrite `ascend.alt.01-today` as well, because its figures will change.
-- **Ascend App Store listing draft** (`/Users/masonstassi/Desktop/Ascend/docs/app_store_listing_2026-09-08.md`).
-  Its description still opens with "a calorie target that corrects itself", and its promotional
-  text says the targets "correct themselves from what you actually log". Adaptive targets are Pro
-  only, need 14 logged days, are suggestions the user applies, and aren't given under 18. The site
-  now says "Training and nutrition in one app, with calorie targets that can adapt to your
-  progress."; change the listing to match before submission.
 - **Plan Store pricing.** The pricing line on /ascend mentions only the subscriptions. If one-off
   plans are on sale in Ascend's Plan Store at launch, the line is true but incomplete; consider
   "Free to start. Optional Plus, Pro and Elite subscriptions, and plans you can buy once."
 
 ## Other
 
+- **Human coaching** is hidden in Ascend 1.0, so since 2026-10-05 the privacy policy and support
+  page don't describe it. If it's switched back on, both need it again before that build ships:
+  a row in privacy §2.8, "or coaching relationship" in the blocking sentences (privacy §2.8 and
+  support "Sharing and safety"), and a support entry, each checked against what the app then does.
 - `src/terms.njk` (its text moved unchanged from `public/terms.html`) is titled "Terms of Service"
   (the app says "Terms of Use"), names no product, and mentions "third-party payment providers"
   (Apple handles all billing). Needs a proper rewrite.

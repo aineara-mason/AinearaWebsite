@@ -33,14 +33,13 @@ Stop sharing data with AI. Ascend's AI features are powered by Claude, made by A
 Apple Health. Connect or manage it at Settings › Integrations › Apple Health. To change what Ascend can read, open the Health app, tap your profile picture, then under Privacy tap Apps › Ascend. You can also go to your iPhone's Settings › Privacy & Security › Health › Ascend. Turning access off stops new data from syncing, but doesn't delete what has already synced; delete your account or email privacy@aineara.com <mailto:privacy@aineara.com> for that.
 Private account and search. Settings › Privacy › Handle & Privacy has Private account, Show me in search, and your handle.
 ## Sharing and safety
-Who sees your workouts. Followers see only the workouts you share. Accountability partners can see when each of your workouts started and how long it lasted, including ones you haven't shared, but not your exercises, sets or weights. A coach you accept sees the date, duration and notes of all your workouts and your plans, but never your sets, check-ins, meals or Apple Health data.
+Who sees your workouts. Followers see only the workouts you share. Accountability partners can see when each of your workouts started and how long it lasted, including ones you haven't shared, but not your exercises, sets or weights.
 Share or unshare a workout. Workouts › History, open the workout, then Share to followers.
 Delete a workout. Workouts › History, swipe left on the workout, then Delete.
 Report a post. On the Feed, tap the post's ··· menu, then Report, choose a reason and tap Submit report. We review reports within 24 hours.
-Block someone. From a post's ··· menu, from Find People, or from Follow Requests. Blocking ends any accountability partnership or coaching relationship between you. Unblock at Settings › Privacy › Handle & Privacy › Blocked Accounts.
+Block someone. From a post's ··· menu, from Find People, or from Follow Requests. Blocking ends any accountability partnership between you. Unblock at Settings › Privacy › Handle & Privacy › Blocked Accounts.
 Follow requests. Feed › ··· › Follow Requests.
 Remove an accountability partner. Feed › Partners, swipe on the partner, then Remove.
-Coaching. Find a coach at Feed › ··· › Find a Coach. Accept a coach's invite at Settings › Coaching. End coaching at Settings › Coaching › My Coach › End Coaching Relationship; blocking a coach also ends it.
 ## Nutrition
 Why don't I have a calorie target? A starting calorie target needs your date of birth, biological sex, height and weight; add any that are missing at Settings › Stats. Ascend doesn't show calorie targets to anyone under 18. To estimate one, go to Settings › Calorie Target › Estimate My Calorie Target.
 Delete a meal. On the Nutrition tab, swipe the entry.
