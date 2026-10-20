@@ -52,6 +52,32 @@ accurate when those changes ship.
   plans are on sale in Ascend's Plan Store at launch, the line is true but incomplete; consider
   "Free to start. Optional Plus, Pro and Elite subscriptions, and plans you can buy once."
 
+## Needed before Sillage launches
+
+- **Email-confirmation page, `/sillage/confirmed`.** Sillage keeps Supabase's "Confirm email" off
+  until this page exists (decided 2026-10-20). Once it's on, the link in the confirmation email
+  confirms the address, then opens the Sillage Supabase project's Site URL in the browser, never
+  the app. The default Site URL, `http://localhost:3000`, shows a connection error, and the
+  homepage would put the Ascend waitlist form ("One email to confirm") in front of a new Sillage
+  user. The page should:
+  - say "Your email is confirmed. Go back to Sillage and sign in."
+  - when the URL has `error_code`, say instead "This link was already used or has expired. Try
+    signing in to Sillage. If it asks you to confirm your email first, tap Forgot your password?
+    for a code, or create your account again for a new link."
+  - have no form and no third-party script, which means a layout without the Cloudflare beacon
+    that `src/_includes/layouts/base.njk` loads, and be `noindex`. Links that skip PKCE, such as
+    dashboard invites, land on the Site URL with session tokens after the `#`.
+  - clear `?code=` and any `#...` from the address bar with `history.replaceState`.
+
+  Then set the Site URL to the page and turn "Confirm email" on. The background, including mail
+  scanners and what an expired link does, is in the Sillage repo's `supabase/README.md`
+  ("Confirm Sign Up").
+- **Sillage account emails in the privacy policy.** This answers the TODO in §4 on the
+  `sillage-privacy-draft` branch. Sign-up sends no confirmation email for now. Reset codes go
+  through Resend from aineara.com once Sillage's Supabase custom SMTP is set up, so §4 needs
+  that sentence and Sillage needs adding to Resend's row in §5. If "Confirm email" is turned on
+  before launch, mention the confirmation email too.
+
 ## Other
 
 - **Human coaching** is hidden in Ascend 1.0, so since 2026-10-05 the privacy policy and support
