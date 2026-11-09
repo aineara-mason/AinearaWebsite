@@ -31,7 +31,7 @@ export function isJunk(rel) {
   return rel.split("/").includes(".DS_Store") || / 2(\.[^/]*)?$/.test(path.posix.basename(rel));
 }
 
-export const PAGES = ["index.html", "ascend.html", "sillage.html", "privacy.html", "terms.html", "support.html", "404.html"];
+export const PAGES = ["index.html", "ascend.html", "sillage.html", "privacy.html", "terms.html", "support.html", "404.html", "email-confirmed.html"];
 
 // Script and style bodies stay raw text; <noscript> children are parsed as
 // HTML so the no-JS signup note can be queried.

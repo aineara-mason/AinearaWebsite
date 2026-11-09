@@ -1,0 +1,24 @@
+---
+layout: layouts/base.njk
+permalink: email-confirmed.html
+noindex: true
+analytics: false
+titleId: email-confirmed.title
+descriptionId: meta.email-confirmed.description
+---
+{#- Where the link in Ascend's sign-up confirmation email lands (A2 E1, E4).
+    Not linked from the nav, the footer or any page, and noindex keeps it out
+    of the sitemap. No analytics beacon: the address can carry a one-time
+    ?code= or an #error, which email-confirmed.js clears. Without JavaScript
+    the page shows the confirmed copy; with it, a link that GoTrue refused
+    swaps in the data-msg-failed copy. -#}
+<main id="main">
+  <section class="hero">
+    <div class="container">
+      <p class="label">{{ copy["email-confirmed.label"] }}</p>
+      <h1 class="display" data-email-confirmed data-msg-failed="{{ copy['email-confirmed.failed.heading'] }}">{{ copy["email-confirmed.heading"] }}</h1>
+      <p data-email-confirmed data-msg-failed="{{ copy['email-confirmed.failed.line'] }}">{{ copy["email-confirmed.line"] }}</p>
+    </div>
+  </section>
+</main>
+<script type="module" src="/assets/js/email-confirmed.js"></script>

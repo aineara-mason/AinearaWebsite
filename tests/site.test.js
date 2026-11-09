@@ -77,13 +77,25 @@ test("every page is a flat .html file", () => {
   }
 });
 
+// A2: the email-confirmed page can land with a one-time ?code= in the
+// address, so it loads no third-party script at all.
+const NO_ANALYTICS = ["email-confirmed.html"];
+
 test("every page loads the analytics beacon with the site's token", () => {
-  for (const rel of PAGES) {
+  for (const rel of PAGES.filter((page) => !NO_ANALYTICS.includes(page))) {
     const beacon = html(rel).querySelector(`script[src="${BEACON_SRC}"]`);
     assert.ok(beacon, `${rel}: no Cloudflare Web Analytics beacon`);
     assert.ok(beacon.hasAttribute("defer"), `${rel}: the beacon should be deferred`);
     const config = JSON.parse(beacon.getAttribute("data-cf-beacon") ?? "{}");
     assert.equal(config.token, site.analyticsToken, `${rel}: wrong beacon token`);
+  }
+});
+
+test("pages that land with auth parameters load no analytics beacon", () => {
+  for (const rel of NO_ANALYTICS) {
+    assert.ok(PAGES.includes(rel), `${rel} is not in PAGES`);
+    assert.equal(html(rel).querySelector(`script[src="${BEACON_SRC}"]`), null, `${rel}: loads the beacon`);
+    assert.doesNotMatch(readFileSync(path.join(SITE_DIR, rel), "utf8"), /cloudflareinsights/, `${rel}: mentions the beacon`);
   }
 });
 
@@ -307,7 +319,8 @@ test("no page uses the dead ascend-homepage source", () => {
 // Pinned bytes, from public/robots.txt:1-4 and public/_redirects:1-2.
 const T11_ROBOTS = "User-agent: *\nAllow: /\n\nSitemap: https://aineara.com/sitemap.xml\n";
 const T11_REDIRECTS = "# Redirect rules: <source> <destination> [status]\n/home / 301\n";
-// D9: terms and 404 are noindex and stay out of the sitemap.
+// D9: terms and 404 are noindex and stay out of the sitemap. So is A2's
+// email-confirmed page, which only the confirmation email links to.
 const T11_SITEMAP_LOCS = [
   "https://aineara.com/",
   "https://aineara.com/ascend",
@@ -386,5 +399,5 @@ t11Test("T11: indexable pages have a canonical URL and noindex pages have none",
       t11Assert.equal(canonical, t11Site.url + cleanPath, `${rel}: canonical`);
     }
   }
-  t11Assert.deepEqual(noindex.sort(), ["404.html", "terms.html"]);
+  t11Assert.deepEqual(noindex.sort(), ["404.html", "email-confirmed.html", "terms.html"]);
 });

@@ -54,6 +54,12 @@ const PAGE_IDS = {
   "terms.html": ["title.terms", "meta.terms.description"],
   "support.html": ["title.support", "meta.support.description"],
   "404.html": ["404.title", "404.label", "404.heading", "404.line", "404.button", "meta.404.description"],
+  // The failed copy rides in data-msg-failed until email-confirmed.js swaps it in.
+  "email-confirmed.html": [
+    "email-confirmed.title", "meta.email-confirmed.description",
+    "email-confirmed.label", "email-confirmed.heading", "email-confirmed.line",
+    "email-confirmed.failed.heading", "email-confirmed.failed.line",
+  ],
 };
 
 // Checked by tests/live-state.test.js against the live build instead.

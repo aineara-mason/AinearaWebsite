@@ -158,4 +158,14 @@ export default {
   "404.heading": "This page doesn't exist.",
   "404.line": "The link may be broken, or the page may have moved.",
   "404.button": "Return Home",
+
+  // Email confirmed (A2): where the link in Ascend's sign-up confirmation
+  // email lands. The failed copy is swapped in by email-confirmed.js.
+  "email-confirmed.title": "Email confirmation — Aineara",
+  "meta.email-confirmed.description": "Confirming the email address for your Ascend account.",
+  "email-confirmed.label": "Ascend",
+  "email-confirmed.heading": "Your email is confirmed.",
+  "email-confirmed.line": "Go back to Ascend and tap \"I've confirmed it\", or sign in.",
+  "email-confirmed.failed.heading": "This link didn't work.",
+  "email-confirmed.failed.line": "It may have expired or already been used. Go back to Ascend and tap \"Resend email\", or try signing in.",
 };

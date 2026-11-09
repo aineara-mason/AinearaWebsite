@@ -39,7 +39,9 @@
 {%- endfor %}
 <script type="module" src="/assets/js/site.js"></script>
 <script nomodule>document.documentElement.classList.remove("js")</script>
+{%- if analytics !== false %}
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ site.analyticsToken }}"}'></script>
+{%- endif %}
 </head>
 <body class="{{ bodyClass }}">
 <a class="skip-link" href="#main">{{ copy["a11y.skip"] }}</a>
