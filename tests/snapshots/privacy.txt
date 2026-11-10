@@ -5,6 +5,7 @@ Last updated: September 29, 2026
 ## At a glance
 We don't sell your personal information, and we don't show ads.
 Ascend contains no advertising, analytics or tracking software from other companies, and doesn't track you across other companies' apps or websites.
+Ascend records which of its features you use, in our own database, to improve the app. It never records what you type or say, amounts you log or Apple Health data, and you can turn it off in Settings (section 2.12).
 Data from Apple Health is never used for advertising or data mining, and is never stored in iCloud by Ascend.
 Ascend's AI features send data to our AI provider, Anthropic, only after you allow it in the app. What we send never includes your name, email address or account ID.
 You can export your workouts and meals, and delete your account, from inside Ascend.
@@ -16,13 +17,14 @@ Sillage, an app we're still developing (section 4).
 Questions or requests: privacy@aineara.com <mailto:privacy@aineara.com>.
 ## 2. Ascend
 ### 2.1 Your account
-You sign up with an email address and password. Accounts are managed by our database and authentication provider, Supabase; we never see your password. Account emails, such as password-reset codes, are sent through our email provider, Resend. Ascend keeps you signed in with a session stored in your iPhone's Keychain.
+You sign up with an email address and password, or with Sign in with Apple. Accounts are managed by our database and authentication provider, Supabase; we never see your password. Account emails, such as password-reset codes, are sent through our email provider, Resend. Ascend keeps you signed in with a session stored in your iPhone's Keychain.
+Sign in with Apple. If you use it, Apple gives us an identifier for your Apple Account that Apple gives only to apps from our developer account, your email address and, the first time only, your name. If you choose Hide My Email, we receive a private relay address from Apple instead of your real one, and emails we send to it are forwarded by Apple. We save your first and last name to your account and use your first name to fill in your preferred name, which you can leave blank. If the email address Apple gives us matches an existing Ascend account, you're signed in to that account. Our servers also keep a token from Apple, which no one can read from the app, so that we can withdraw Ascend's access to your Apple Account when you delete your Ascend account (section 8). Apple doesn't give us your Apple Account password.
 Every account gets a handle when it's created (for example “user12”), which you can change. Other signed-in Ascend users can find you by searching your handle unless you turn off Show me in search (Settings › Privacy › Handle & Privacy).
 ### 2.2 Profile and onboarding
 We ask for your preferred name, your units (metric or imperial), your main goal, your experience level, how many days a week you train (4 unless you change it) and the equipment you have. The rest is optional: date of birth, biological sex (you can choose Prefer not to say), height, weight, any injuries or limitations you type in, and dietary preferences, which include religious ones such as Halal and Kosher. We also ask whether you want to connect Apple Health and whether you want reminders.
 Some of this is health information, and dietary preferences can reveal religious belief. We use your answers to build your plans, calculate targets and tailor advice. Your preferred name is also shown to your followers next to workouts you share (section 2.8). Your answers are saved as you go, so they're kept even if you don't finish onboarding.
 You can change your date of birth, biological sex, height, weight and units later in Settings › Stats, and your goal, experience level, training days, equipment and dietary preferences when you create a new plan in the Plans tab. To change your preferred name or the injuries you entered, email privacy@aineara.com <mailto:privacy@aineara.com>.
-We also record, linked to your account, when you start, resume and finish onboarding and each step you view and complete, together with the goal you picked, the choice you made on the Apple Health step, your app version and the time, so we can see where onboarding is confusing.
+We also record, linked to your account, when you start, resume and finish onboarding and each step you view and complete, together with the goal you picked, the choice you made on the Apple Health step, your app version and the time, so we can see where onboarding is confusing. These records are kept for 13 months and then deleted, and you can turn them off with Share Usage Data (section 2.12).
 ### 2.3 What you log
 Ascend stores what you record so it's available across sessions and devices: workouts (date, duration, exercises, sets, reps, weight, set type such as warm-up or drop set, and effort if you rate it), personal records and templates; meals and the foods in them, custom foods, recipes, and your calorie and macro (protein, carb and fat) targets; daily and weekly check-ins (mood, energy, hunger, soreness, stress and notes; the weekly check-in also records your weight and hours of sleep); habits; hydration; and your training plans. When you log a meal by voice, photo or label scan, the food is also saved as one of your custom foods.
 When you search for a food, the words you type (including partial words as you type) and any barcodes you scan are stored with your account. We use this history to keep search fast and to find gaps in our food catalog.
@@ -70,9 +72,18 @@ Subscriptions are sold and billed by Apple; we never see your payment details. W
 Reminders are scheduled on your iPhone: workouts, streaks, water and meals, plus a one-off suggestion to take a recovery day when your readiness is low or your training load jumps. For social notifications we store your device's push token and send, through Apple, one of four fixed messages: a new follower, a follow request, an accepted request or kudos.
 Notifications never include anyone's name, any numbers or anything you've logged. The one that depends on your data is the recovery-day suggestion, which may say your recovery is low or your training load has jumped. It can appear on your Lock Screen, and you can turn it off with Ascend's notification setting in your iPhone's Settings.
 ### 2.11 On your iPhone
-Ascend's widgets can show your readiness score, streak, calories and protein, and water on your Home Screen and Lock Screen, where anyone holding your phone can see them. When you sign out, Ascend clears the widgets and your reminders. A few things can stay on the phone until you delete the app: an unfinished workout, your cached weekly summary, export files and share images you created, your streak-reminder time and when you last logged, the last calorie and macro targets Ascend suggested if you dismissed or applied them, and the phone's notification token.
+Ascend's widgets can show your readiness score, streak, calories and protein, and water on your Home Screen and Lock Screen, where anyone holding your phone can see them. When you sign out, Ascend clears the widgets and your reminders. A few things can stay on the phone until you delete the app: an unfinished workout, your cached weekly summary, export files and share images you created, your streak-reminder time and when you last logged, the last calorie and macro targets Ascend suggested if you dismissed or applied them, and the phone's notification token. Usage events that haven't been sent yet (section 2.12) wait on the phone until they can be sent; any not sent within 7 days are discarded instead of sent, and all of them are deleted when you sign out or delete the app. If you use Sign in with Apple, Ascend also stores a note that your account uses it, and checks with Apple whether you still allow Ascend; if you've stopped using Sign in with Apple with Ascend in your iPhone's Settings, Ascend signs you out. The note is removed when you sign out.
 ### 2.12 Analytics
-Ascend has no third-party analytics. Apart from the onboarding steps (section 2.2), food search history (section 2.3) and a daily count of your AI requests (section 2.6), all kept until you delete your account, we don't record how you use the app.
+Ascend has no third-party analytics. To learn which features people use and where the app falls short, Ascend records a short list of usage events, linked to your account, in our own database at Supabase:
+when you open the app, and whether you signed up or signed in with email or with Apple;
+the onboarding steps (section 2.2);
+when you create a plan, and when you start, finish, discard or change a workout;
+when you log, change or copy food, which way you logged it (such as search, Quick Add, barcode, label scan, voice, photo, custom food or recipe) and which meal it went to;
+for food and exercise searches, whether a search found anything, how many searches and results there were, and whether you picked one;
+how many exercises Log Workout by Voice matched; and
+when you open one of Ascend's notifications, and which kind it was.
+Each event also records your app version and the time. Events never include what you type or say, the names of foods or exercises, amounts such as weights, reps, calories or portions, or anything from Apple Health; they only count things in the app, such as how many results a search showed. Events and onboarding records are kept for 13 months and then deleted. To stop them, turn off Share Usage Data in Settings › Privacy › Handle & Privacy (Ascend 1.1 and later), or email privacy@aineara.com <mailto:privacy@aineara.com>. Turning it off also deletes the events and onboarding records already kept.
+Apart from these events, food search history (section 2.3) and a daily count of your AI requests (section 2.6), both kept until you delete your account, we don't record how you use the app.
 Our servers and providers keep technical logs to run and fix the service, for a limited period set by those providers. These can include search words, food names and your account ID. Our sign-in provider's logs also record the email address used to sign in, sign up or reset a password.
 ## 3. aineara.com and our waitlists
 Hosting. The site is hosted by Cloudflare, which processes your IP address and request details to deliver and protect the site.
@@ -87,7 +98,7 @@ These companies receive personal information so we can provide our services:
 Provider | What for | What they receive
 Supabase | Ascend's database, sign-in and servers | All Ascend account data described in section 2
 Anthropic | Ascend's AI features, with your permission | What's listed in section 2.6
-Apple | App Store purchases and push notifications | Purchase details, your Ascend account ID (a random code, not your name or email address), your push token and notification text
+Apple | App Store purchases, push notifications and Sign in with Apple | Purchase details, your Ascend account ID (a random code, not your name or email address), your push token and notification text. If you use Sign in with Apple: our request to sign you in, and, when you delete your account, our request to withdraw Ascend's access
 USDA FoodData Central | Food search | Search words, without account details
 Open Food Facts | Barcode lookup | Barcode numbers, without account details
 Cloudflare | Website hosting, analytics and waitlist storage | IP address, request details and waitlist emails
@@ -101,14 +112,15 @@ keep your data in sync and let you share what you choose with other users;
 process purchases and restore them;
 review reports and keep the community safe;
 answer support and privacy requests;
+understand which features are used, so we can improve them;
 protect our services against abuse and fix problems; and
 comply with the law.
-Where the law requires a legal basis: we process information to provide the service you signed up for; we rely on your consent for Apple Health data, optional sensitive information and AI features; and we rely on our legitimate interests to secure the service and improve onboarding and search.
+Where the law requires a legal basis: we process information to provide the service you signed up for; we rely on your consent for Apple Health data, optional sensitive information and AI features; and we rely on our legitimate interests to secure the service and improve Ascend's features.
 You can withdraw consent for AI features in Settings › AI Features, and for Apple Health in the Health app. You can remove your date of birth, or set biological sex to Prefer not to say, in Settings › Stats. Injuries and dietary preferences can't yet be cleared in the app; email privacy@aineara.com <mailto:privacy@aineara.com> and we'll remove them.
 ## 7. Selling, sharing and advertising
 We don't sell personal information, and we don't share it for targeted advertising. We share it only with the service providers in section 5, with other users as described in section 2.8, when the law requires it, to protect the safety of people or our services, or as part of a merger or sale of our business, in which case this policy continues to apply.
 ## 8. Keeping and deleting information
-We keep your Ascend data until you delete it or delete your account. Some things can only be deleted by deleting your account, or by asking us at privacy@aineara.com <mailto:privacy@aineara.com>: synced Apple Health data, food search history and custom foods. Custom foods include the foods Ascend saves when you log a meal by voice, photo or label scan; deleting that meal doesn't delete them.
+We keep your Ascend data until you delete it or delete your account. Some things can only be deleted by deleting your account, or by asking us at privacy@aineara.com <mailto:privacy@aineara.com>: synced Apple Health data, food search history and custom foods. Custom foods include the foods Ascend saves when you log a meal by voice, photo or label scan; deleting that meal doesn't delete them. Usage events and onboarding records (section 2.12) are deleted after 13 months, or straight away if you turn off Share Usage Data.
 You can delete your account in Ascend at Settings, at the very bottom, › Delete Account. This permanently deletes your account and the data stored with it, including your Apple Health data and food search history. A few things are kept:
 reports other people made about your posts, without your account linked to them;
 challenges and groups you created that others joined, which pass to another member;
@@ -117,12 +129,14 @@ custom foods that someone else logged before custom foods became private, which 
 anything saved on your iPhone (section 2.11), until you delete the app;
 technical logs and backups kept by our providers, for as long as their retention settings keep them, including sign-in records that contain your email address; and
 information already sent to Anthropic, USDA FoodData Central or Open Food Facts.
+If you used Sign in with Apple, deleting your account also asks Apple to withdraw Ascend's access to your Apple Account, and deletes the token we kept for that. If Apple can't be reached, your Ascend account is still deleted and Ascend tells you how to remove it yourself: open your iPhone's Settings, tap your name, then Sign-In & Security › Sign in with Apple, and remove Ascend.
 Deleting your account doesn't cancel an Apple subscription; cancel it in your Apple Account first. Waitlist emails are kept until you ask us to remove them, or until we no longer need them to announce the launch.
 ## 9. Your choices and rights
 See and export. Settings › Data › Export My Data gives you a file of your workouts and meals. For a copy of anything else, email us.
 Correct. Change your stats in Settings › Stats and your goals when you create a new plan (section 2.2). To change your email address, display name or anything else, email us.
 Delete. Delete your account in the app (section 8), or email us.
-Withdraw consent. Stop AI sharing in Settings › AI Features, change Apple Health access in the Health app, and change camera and microphone access in your iPhone's Settings.
+Withdraw consent. Stop AI sharing in Settings › AI Features, change Apple Health access in the Health app, and change camera and microphone access in your iPhone's Settings. Stop using Sign in with Apple with Ascend in your iPhone's Settings, under your name › Sign-In & Security › Sign in with Apple; Ascend then signs you out, and you can sign in again later to the same account.
+Object to usage analytics. Turn off Share Usage Data in Settings › Privacy › Handle & Privacy (Ascend 1.1 and later), or email us (section 2.12).
 Control visibility. Private account and Show me in search are in Settings › Privacy › Handle & Privacy.
 Depending on where you live, you may have further rights, such as to object to or restrict some processing, or to complain to a data protection authority. Send requests to privacy@aineara.com <mailto:privacy@aineara.com> from the email address on your account, so we can confirm it's you. We'll respond within the time the law requires, and we won't treat you differently for using your rights.
 ## 10. Children
